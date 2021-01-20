@@ -1,0 +1,32 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:textColorPrimary">@color/text.color.primary</item>
+        <!--<item name="android:windowTranslucentStatus">true</item>-->
+    </style>
+
+    <style name="AppTheme.Transparent" parent="AppTheme">
+        <!-- Style for the second activity -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+    </style>
+
+    <style name="PrimaryToolbar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:textColorPrimary">@color/text.color.primary</item>
+        <item name="background">@color/colorPrimary</item>
+        <item name="android:background">@color/colorPrimary</item>
+    </style>
+
+    <style name="PrimaryDialog" parent="Base.Theme.AppCompat.Dialog">
+        <item name="android:windowMinWidthMajor">55%</item>
+        <item name="android:windowMinWidthMinor">55%</item>
+    </style>
+
+</resources>

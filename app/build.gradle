@@ -1,0 +1,125 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: 'com.google.firebase.firebase-perf'
+
+def final appId = 'com.ktmb.pts'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.3"
+    flavorDimensions "default"
+
+    defaultConfig {
+        applicationId appId
+        minSdkVersion 29
+        targetSdkVersion 29
+        versionCode 1
+        versionName "0.0.1"
+        archivesBaseName = "ktmb-pts-v$versionName($versionCode)"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        debug {
+            debuggable true
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    productFlavors {
+        staging {
+            applicationId appId + ".stg"
+            resValue "string", "app_name", "PTS STG"
+        }
+        production {
+            applicationId appId
+            resValue "string", "app_name", "PTS"
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    buildFeatures {
+        dataBinding true
+    }
+}
+
+dependencies {
+
+    // View
+
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation "com.android.support:design:29.0.0"
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+
+    // Utility
+
+    def anko_version='0.10.8'
+
+    implementation 'com.pixplicity.easyprefs:library:1.9.0'
+    implementation 'org.greenrobot:eventbus:3.2.0'
+    implementation "org.jetbrains.anko:anko:$anko_version"
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+
+    // Maps
+
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
+    implementation 'com.akexorcist:google-direction-library:1.2.1'
+    implementation 'com.google.maps.android:android-maps-utils:2.0.3'
+
+    // Network
+
+    def okhttp_version = "4.7.2"
+    def retrofit_version = "2.9.0"
+
+    implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    implementation 'com.facebook.stetho:stetho-okhttp3:1.5.1'
+    implementation('com.github.ihsanbal:LoggingInterceptor:3.1.0') {
+        exclude group: 'org.json', module: 'json'
+    }
+    implementation 'com.itkacher.okhttpprofiler:okhttpprofiler:1.0.7'
+
+    // Coroutines
+
+    implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9'
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0-beta01"
+
+    // Firebase
+
+    implementation platform('com.google.firebase:firebase-bom:26.1.0')
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation 'com.google.firebase:firebase-perf-ktx'
+    implementation 'com.google.firebase:firebase-messaging-ktx'
+    implementation 'com.google.android.gms:play-services-basement:17.5.0'
+
+    // Kotlin
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'androidx.core:core-ktx:1.3.2'
+
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    testImplementation 'junit:junit:4.13'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+}

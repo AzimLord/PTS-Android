@@ -1,0 +1,20 @@
+<resources>
+    <string name="label.okay">Okay</string>
+    <string name="label.yes">Yes</string>
+    <string name="label.no">No</string>
+    <string name="label.try_again">Try Again</string>
+    <string name="label.go_to_settings">Go to Settings</string>
+    <string name="label.send_a_report">Send a report</string>
+
+    <!-- Errors -->
+
+    <string name="error.default.title">Something went wrong</string>
+    <string name="error.default.message">We\'re sorry - We ran into an issue. Please try again.</string>
+    <string name="error.connection.message">Please check your internet connection</string>
+    <string name="error.session_expires.title">Session expires</string>
+    <string name="error.session_expires.message">Please login again to continue</string>
+    <string name="error.permission.title">Permission Access</string>
+    <string name="error.permission.location.message">App needs location permission to work</string>
+    <string name="error.gps.not_available.title">No GPS reception</string>
+    <string name="error.gps.not_available.message">No GPS reception. Make sure you\'re outdoor</string>
+</resources>

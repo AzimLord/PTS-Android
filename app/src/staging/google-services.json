@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "660065579984",
+    "firebase_url": "https://ktmb-pts-stg.firebaseio.com",
+    "project_id": "ktmb-pts-stg",
+    "storage_bucket": "ktmb-pts-stg.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:660065579984:android:746ce00479c1f5f8bf3fd5",
+        "android_client_info": {
+          "package_name": "com.ktmb.pts.stg"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "660065579984-fc0mepv2th6jf39k4lshmulv3hmrvok1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcBZ3-ojAVazlTAt86kK-yoafzarVyy14"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "660065579984-fc0mepv2th6jf39k4lshmulv3hmrvok1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
