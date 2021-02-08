@@ -2,12 +2,16 @@ package com.ktmb.pts.utilities
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
+import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.ktmb.pts.base.PTS
 import java.io.IOException
-import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
+import kotlin.math.roundToInt
 
 
 object Utilities {
@@ -20,6 +24,32 @@ object Utilities {
 
 
 
+    }
+
+    object DistanceHelper {
+        fun formatMeter(meter: Double?): String {
+            return if (meter != null) {
+                if (meter >= 1000) {
+                    "${String.format("%.1f", meter / 1000)} KM"
+                } else {
+                    "${(meter.toFloat() / 50f).roundToInt() * 50} M"
+                }
+            } else {
+                "Unknown"
+            }
+        }
+
+        fun speakMeter(meter: Double?): String {
+            return if (meter != null) {
+                if (meter >= 1000) {
+                    "${String.format("%.1f", meter / 1000)} Kilometer"
+                } else {
+                    "${(meter.toFloat() / 50f).roundToInt() * 50} Meter"
+                }
+            } else {
+                "Unknown"
+            }
+        }
     }
 
     object Sample {
@@ -40,12 +70,20 @@ object Utilities {
                 val input = connection.inputStream
                 val bitmap = BitmapFactory.decodeStream(input)
 
-                Bitmap.createScaledBitmap(bitmap, 60.px, 60.px, false)
+                Bitmap.createScaledBitmap(bitmap, 40.px, 40.px, false)
             } catch (e: IOException) {
                 LogManager.log("getBitmapFromLink(2): ${e.message}")
                 e.printStackTrace()
                 null
             }
+        }
+    }
+
+    object BitmapHelper {
+        fun resToBitmap(@DrawableRes image: Int, height: Int = 50, width: Int = 50): BitmapDescriptor {
+            val bitmapDrawable = ContextCompat.getDrawable(PTS.instance.applicationContext, image) as BitmapDrawable
+            var bitmap =  Bitmap.createScaledBitmap(bitmapDrawable.bitmap, width, height, false)
+            return BitmapDescriptorFactory.fromBitmap(bitmap)
         }
     }
 }

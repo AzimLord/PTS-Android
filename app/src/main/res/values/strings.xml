@@ -5,6 +5,12 @@
     <string name="label.try_again">Try Again</string>
     <string name="label.go_to_settings">Go to Settings</string>
     <string name="label.send_a_report">Send a report</string>
+    <string name="label.navigation.start">Start Navigation</string>
+    <string name="label.navigation.stop">Stop Navigation</string>
+
+    <!-- Dialog -->
+
+    <string name="dialog.message.navigation.stop">Are you sure want to stop navigation?</string>
 
     <!-- Errors -->
 

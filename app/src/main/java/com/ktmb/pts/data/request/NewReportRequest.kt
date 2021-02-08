@@ -8,5 +8,7 @@ data class NewReportRequest(
     @SerializedName("longitude")
     val longitude: Double,
     @SerializedName("marker_category_id")
-    val reportTypeId: Int
+    val reportTypeId: Int,
+    @SerializedName("track_key")
+    val track_key: String
 )

@@ -20,10 +20,7 @@ import com.ktmb.pts.base.BaseActivity
 import com.ktmb.pts.databinding.ActivitySplashBinding
 import com.ktmb.pts.ui.main.view.MainActivity
 import com.ktmb.pts.ui.start.viewmodel.SplashViewModel
-import com.ktmb.pts.utilities.AccountManager
-import com.ktmb.pts.utilities.Constants
-import com.ktmb.pts.utilities.NavigationManager
-import com.ktmb.pts.utilities.Status
+import com.ktmb.pts.utilities.*
 
 class SplashActivity : BaseActivity() {
 
@@ -124,9 +121,6 @@ class SplashActivity : BaseActivity() {
                     tryAgainMessage = getString(R.string.label_go_to_settings)
                 )
             }
-            NavigationManager.getRoute() != null -> {
-                proceed()
-            }
             else -> {
                 FirebaseMessaging.getInstance().token
                     .addOnSuccessListener {
@@ -178,11 +172,35 @@ class SplashActivity : BaseActivity() {
                     }
                     Status.SUCCESS -> {
                         viewModel.hideProgress()
-                        proceed()
+                        getTracks()
                     }
                 }
             }
         })
+    }
+
+    private fun getTracks() {
+        if (ConfigManager.getTracks() == null) {
+            viewModel.hideError()
+            viewModel.getTracks().observe(this, Observer {
+                it?.let { resource ->
+                    when (resource.status) {
+                        Status.LOADING ->
+                            viewModel.showProgress()
+                        Status.ERROR -> {
+                            viewModel.hideProgress()
+                            viewModel.showError(errorMessage = it.message, showTryAgain = true)
+                        }
+                        Status.SUCCESS -> {
+                            viewModel.hideProgress()
+                            proceed()
+                        }
+                    }
+                }
+            })
+        } else {
+            proceed()
+        }
     }
 
     private fun proceed() {

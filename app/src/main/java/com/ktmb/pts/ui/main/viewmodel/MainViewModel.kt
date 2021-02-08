@@ -1,9 +1,12 @@
 package com.ktmb.pts.ui.main.viewmodel
 
+import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
 import com.google.android.gms.maps.model.LatLng
+import com.ktmb.pts.R
 import com.ktmb.pts.base.BaseViewModel
+import com.ktmb.pts.base.PTS
 import com.ktmb.pts.data.repository.ReportRepo
 import com.ktmb.pts.utilities.NavigationManager
 import com.ktmb.pts.utilities.Resource
@@ -11,17 +14,28 @@ import kotlinx.coroutines.Dispatchers
 
 class MainViewModel: BaseViewModel() {
 
-    var gpsIsAvailable = MutableLiveData(false)
     private val reportRepo = ReportRepo()
 
-    fun getReports(routeCoordinates: ArrayList<LatLng>) = liveData(Dispatchers.IO) {
+    val gpsStatusVisibility = MutableLiveData(View.VISIBLE)
+    val reportVisibility = MutableLiveData(View.GONE)
+    val recenterVisibility = MutableLiveData(View.GONE)
+    val navigationBtnVisibility = MutableLiveData(View.GONE)
+    val routeNameVisibility = MutableLiveData(View.GONE)
+    val primaryButtonText = MutableLiveData(PTS.instance.getString(R.string.label_navigation_start))
+    val speed = MutableLiveData("")
+    val reportImage = MutableLiveData("")
+    val reportName = MutableLiveData("")
+    val reportDistance = MutableLiveData("")
+    val routeName = MutableLiveData("")
+
+    fun getReports() = liveData(Dispatchers.IO) {
         emit(Resource.loading())
         try {
             val response = reportRepo.getReports()
             if (response.isSuccessful) {
                 if (response.code() == 200) {
                     if (response.body() != null) {
-                        val filteredReport = NavigationManager.processReports(response.body()!!, routeCoordinates)
+                        val filteredReport = NavigationManager.processReports(response.body()!!)
                         emit(Resource.success(filteredReport, response))
                     } else {
                         emit(Resource.error(response))

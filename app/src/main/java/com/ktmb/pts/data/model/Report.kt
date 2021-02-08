@@ -14,6 +14,10 @@ data class Report(
     val longitude: Double,
     @SerializedName("category")
     val reportType: ReportType,
+    @SerializedName("track_key")
+    val trackKey: String? = null,
     @SerializedName("mapIndex")
-    var mapIndex: Int? = null
+    var mapIndex: Int? = null,
+    @SerializedName("mapReverseIndex")
+    var mapReverseIndex: Int? = null
 ): Parcelable

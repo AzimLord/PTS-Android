@@ -21,28 +21,6 @@
             android:layout_height="match_parent" />
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/tv_next_report"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#80000000"
-                android:gravity="center"
-                android:padding="12dp"
-                android:textColor="#FFF"
-                android:textStyle="bold"
-                tools:text="Next report distance: 10 KM" />
-
-        </LinearLayout>
-
-        <LinearLayout
             android:id="@+id/v_footer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -56,12 +34,11 @@
                 android:animateLayoutChanges="true">
 
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/v_speed"
                     android:layout_width="74dp"
                     android:layout_height="74dp"
                     android:layout_marginHorizontal="@dimen/view.space.xlarge"
                     android:layout_marginVertical="@dimen/view.space.small"
-                    android:visibility="gone"
+                    android:visibility="@{viewModel.navigationBtnVisibility}"
                     app:cardCornerRadius="37dp"
                     tools:visibility="visible">
 
@@ -75,6 +52,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerHorizontal="true"
+                            android:text="@={viewModel.speed}"
                             android:textSize="32sp"
                             tools:text="25" />
 
@@ -98,12 +76,12 @@
                     android:animateLayoutChanges="true">
 
                     <androidx.cardview.widget.CardView
-                        android:id="@+id/btn_report"
                         android:layout_width="74dp"
                         android:layout_height="74dp"
                         android:layout_marginVertical="@dimen/view.space.small"
                         android:layout_marginEnd="@dimen/view.space.xlarge"
-                        android:visibility="gone"
+                        android:onClick="reportAction"
+                        android:visibility="@{viewModel.navigationBtnVisibility}"
                         app:cardCornerRadius="37dp"
                         tools:visibility="visible">
 
@@ -117,12 +95,12 @@
                     </androidx.cardview.widget.CardView>
 
                     <androidx.cardview.widget.CardView
-                        android:id="@+id/btn_recenter"
                         android:layout_width="74dp"
                         android:layout_height="74dp"
                         android:layout_marginVertical="@dimen/view.space.small"
                         android:layout_marginEnd="@dimen/view.space.xlarge"
-                        android:visibility="gone"
+                        android:onClick="recenterAction"
+                        android:visibility="@{viewModel.recenterVisibility}"
                         app:cardCornerRadius="37dp"
                         tools:visibility="visible">
 
@@ -148,132 +126,22 @@
                 app:cardCornerRadius="@dimen/card.radius.normal">
 
                 <LinearLayout
-                    android:id="@+id/v_route_container"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:animateLayoutChanges="true"
-                    android:orientation="vertical">
+                    android:layout_height="wrap_content">
 
-                    <RelativeLayout
+                    <TextView
+                        android:id="@+id/btn_start"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingStart="@dimen/view.space.xlarge"
-                        android:paddingEnd="@dimen/view.space.normal">
-
-                        <TextView
-                            android:id="@+id/tv_route_code"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@android:color/transparent"
-                            android:hint="Select Route"
-                            android:paddingVertical="@dimen/view.space.normal"
-                            android:textSize="14sp" />
-
-                        <ImageView
-                            android:id="@+id/btn_remove_route"
-                            android:layout_width="25dp"
-                            android:layout_height="25dp"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true"
-                            android:background="?attr/selectableItemBackgroundBorderless"
-                            android:visibility="gone"
-                            app:srcCompat="@drawable/ic_close"
-                            tools:visibility="visible" />
-
-                    </RelativeLayout>
-
-                    <LinearLayout
-                        android:id="@+id/v_direction"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:visibility="gone"
-                        tools:visibility="visible">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:paddingHorizontal="@dimen/view.space.xlarge"
-                            android:paddingBottom="@dimen/view.space.normal">
-
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:text="From" />
-
-                                <TextView
-                                    android:id="@+id/tv_from_station"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:textSize="24sp"
-                                    tools:text="Tumpat" />
-
-                            </LinearLayout>
-
-                            <ImageView
-                                android:layout_width="40dp"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical"
-                                app:srcCompat="@drawable/ic_direction_right" />
-
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:gravity="end"
-                                    android:text="To" />
-
-                                <TextView
-                                    android:id="@+id/tv_to_station"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:gravity="end"
-                                    android:textSize="24sp"
-                                    tools:text="JB Sentral" />
-
-                            </LinearLayout>
-
-                        </LinearLayout>
-
-                        <TextView
-                            android:id="@+id/btn_start"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="#00ab66"
-                            android:foreground="?attr/selectableItemBackground"
-                            android:gravity="center"
-                            android:paddingHorizontal="@dimen/card.radius.normal"
-                            android:paddingVertical="@dimen/card.radius.normal"
-                            android:text="START"
-                            android:textColor="@color/white"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/btn_stop"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@color/red"
-                            android:foreground="?attr/selectableItemBackground"
-                            android:gravity="center"
-                            android:paddingHorizontal="@dimen/card.radius.normal"
-                            android:paddingVertical="@dimen/card.radius.normal"
-                            android:text="STOP"
-                            android:textColor="@color/white"
-                            android:textStyle="bold"
-                            android:visibility="gone" />
-
-                    </LinearLayout>
+                        android:background="@color/green"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:gravity="center"
+                        android:paddingHorizontal="@dimen/card.radius.normal"
+                        android:paddingVertical="@dimen/card.radius.normal"
+                        android:text="@={viewModel.primaryButtonText}"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"
+                        android:textStyle="bold" />
 
                 </LinearLayout>
 
@@ -281,17 +149,99 @@
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/v_gps_status"
-            android:layout_width="wrap_content"
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/view.space.xlarge"
-            android:background="@drawable/bg_rounded_red"
-            android:layout_centerHorizontal="true"
-            android:paddingHorizontal="@dimen/view.space.small"
-            android:paddingVertical="@dimen/view.space.xsmall"
-            android:text="GPS is not connected"
-            android:textColor="@color/white" />
+            android:layout_marginHorizontal="@dimen/view.space.xlarge"
+            android:layout_marginTop="-14dp"
+            app:cardCornerRadius="@dimen/card.radius.normal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
+                android:background="@color/white"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/card.radius.normal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/view.space.small"
+                    android:paddingVertical="@dimen/view.space.xsmall"
+                    android:text="GPS is not connected"
+                    android:textColor="@color/red"
+                    android:visibility="@{viewModel.gpsStatusVisibility}" />
+
+                <include
+                    layout="@layout/view_horizontal_line"
+                    android:visibility="@{viewModel.gpsStatusVisibility}" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/view.space.small"
+                    android:paddingVertical="@dimen/view.space.xsmall"
+                    android:textAllCaps="true"
+                    android:text="@={viewModel.routeName}"
+                    android:visibility="@{viewModel.routeNameVisibility}"
+                    tools:text="JB -> Tumpat" />
+
+                <include
+                    layout="@layout/view_horizontal_line"
+                    android:visibility="@{viewModel.reportVisibility}" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="@dimen/view.space.normal"
+                    android:paddingHorizontal="@dimen/view.space.xxlarge"
+                    android:visibility="@{viewModel.reportVisibility}">
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="@dimen/view.space.normal"
+                        android:adjustViewBounds="true"
+                        app:srcCompat="@drawable/ic_report_type_placeholder"
+                        setImageUrl="@{viewModel.reportImage}"/>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="@dimen/view.space.normal">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/view.space.xsmall"
+                            android:singleLine="true"
+                            android:textSize="@dimen/text.xlarge"
+                            android:text="@={viewModel.reportName}"
+                            tools:text="Report Name"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:singleLine="true"
+                            android:textSize="@dimen/text.xlarge"
+                            android:text="@={viewModel.reportDistance}"
+                            tools:text="1 KM" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
 
     </RelativeLayout>
 </layout>

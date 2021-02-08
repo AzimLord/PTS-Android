@@ -12,4 +12,8 @@
 
     <dimen name="card.radius.full">100dp</dimen>
     <dimen name="card.radius.normal">14dp</dimen>
+
+    <dimen name="text.normal">14sp</dimen>
+    <dimen name="text.large">18sp</dimen>
+    <dimen name="text.xlarge">24sp</dimen>
 </resources>

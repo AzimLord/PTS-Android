@@ -20,7 +20,6 @@ class NewReportViewModel: BaseViewModel() {
                 if (response.code() == 200) {
                     if (response.body() != null) {
                         if (response.body() != null) {
-                            NavigationManager.newReport(response.body()!!)
                             emit(Resource.success(response.body(), response))
                         } else {
                             emit(Resource.error(response))

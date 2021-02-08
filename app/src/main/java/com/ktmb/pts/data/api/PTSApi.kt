@@ -1,9 +1,6 @@
 package com.ktmb.pts.data.api
 
-import com.ktmb.pts.data.model.NotificationToken
-import com.ktmb.pts.data.model.Report
-import com.ktmb.pts.data.model.ReportType
-import com.ktmb.pts.data.model.Route
+import com.ktmb.pts.data.model.*
 import com.ktmb.pts.data.request.NewReportRequest
 import com.ktmb.pts.data.request.NotificationTokenRequest
 import retrofit2.Call
@@ -16,6 +13,9 @@ interface PTSApi {
 
     @GET("routes")
     suspend fun getRoutes(): Response<ArrayList<Route>>
+
+    @GET("tracks")
+    suspend fun getTracks(): Response<ArrayList<Track>>
 
     @GET("categories/marker")
     suspend fun getReportCategories(): Response<ArrayList<ReportType>>

@@ -8,4 +8,6 @@ class RouteRepo {
 
     suspend fun getRoutes() = client.getRoutes()
 
+    suspend fun getTracks() = client.getTracks()
+
 }

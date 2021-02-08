@@ -28,7 +28,6 @@ class PTSFirebaseMessagingService: FirebaseMessagingService() {
             NotificationType.REPORT.name -> {
                 val report = Gson().fromJson<Report>(body, Report::class.java)
                 NavigationManager.newReport(report)
-                EventBus.getDefault().post(NewReportEvent(report))
             }
         }
     }

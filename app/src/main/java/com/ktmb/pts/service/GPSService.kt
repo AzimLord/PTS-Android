@@ -3,18 +3,15 @@ package com.ktmb.pts.service
 import android.Manifest
 import android.app.*
 import android.content.Context
-import android.content.Intent
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
-import android.os.IBinder
 import android.speech.tts.TextToSpeech
 import androidx.annotation.RequiresPermission
 import androidx.lifecycle.LifecycleService
 import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.PolyUtil
 import com.ktmb.pts.R
 import com.ktmb.pts.data.model.Report
 import com.ktmb.pts.data.model.Route
@@ -28,13 +25,10 @@ import org.greenrobot.eventbus.Subscribe
 import java.util.*
 import kotlin.collections.ArrayList
 
-class GPSService: LifecycleService() {
+class GPSService : LifecycleService() {
 
     private lateinit var locationManager: LocationManager
     private lateinit var textToSpeech: TextToSpeech
-    private var currentLocation: LatLng? = null
-    private var route: Route? = null
-    private var routeCoordinates: ArrayList<LatLng>? = null
     private var reports: ArrayList<Report> = ArrayList()
 
     @RequiresPermission(
@@ -46,33 +40,25 @@ class GPSService: LifecycleService() {
     )
     override fun onCreate() {
         super.onCreate()
+        locationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        textToSpeech = TextToSpeech(this, TextToSpeech.OnInitListener {})
 
-        route = NavigationManager.getRoute()
+        startLocationUpdate()
 
-        if (route != null) {
-            locationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-            textToSpeech = TextToSpeech(this, TextToSpeech.OnInitListener {})
+        val notification = createNotification()
+        startForeground(Random().nextInt(), notification)
 
-            routeCoordinates = ArrayList(PolyUtil.decode(route!!.polyline))
-            if (NavigationManager.getReports() != null) {
-                reports = NavigationManager.getReports()!!
-            }
+        LogManager.log("GPSService Started")
+        EventBus.getDefault().register(this)
 
-            startNavigation()
-
-            val notification = createNotification()
-            startForeground(Random().nextInt(), notification)
-
-            LogManager.log("GPSService Started")
-            EventBus.getDefault().register(this)
-        } else {
-            onDestroy()
+        if (NavigationManager.getReports() != null) {
+            reports = NavigationManager.getReports()!!
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        stopNavigation()
+        stopLocationUpdate()
         textToSpeech.shutdown()
         EventBus.getDefault().unregister(this)
         LogManager.log("GPSService Stopped")
@@ -85,7 +71,7 @@ class GPSService: LifecycleService() {
             Manifest.permission.ACCESS_BACKGROUND_LOCATION
         ]
     )
-    private fun startNavigation() {
+    private fun startLocationUpdate() {
         locationManager.requestLocationUpdates(
             LocationManager.GPS_PROVIDER,
             Constants.Config.LOCATION_UPDATE_MIN_TIME,
@@ -94,31 +80,13 @@ class GPSService: LifecycleService() {
         )
     }
 
-    private fun stopNavigation() {
+    private fun stopLocationUpdate() {
         locationManager.removeUpdates(locationCallback)
-    }
-
-    private fun getNearestPoint() {
-        var nearestReportIndex = -1
-        val reports = ArrayList<LatLng>()
-        val nearestReport = reports.minBy {
-            nearestReportIndex = PolyUtil.locationIndexOnEdgeOrPath(
-                it,
-                routeCoordinates!!,
-                false,
-                false,
-                0.01
-            )
-            nearestReportIndex
-        }
-        LogManager.log("$nearestReportIndex")
     }
 
     private val locationCallback = object : LocationListener {
         override fun onLocationChanged(location: Location) {
-            if (routeCoordinates != null) {
-                NavigationManager.navigationLocationUpdate(currentLocation, location, routeCoordinates!!, reports, textToSpeech)
-            }
+            NavigationManager.navigationLocationUpdate(location, textToSpeech)
         }
 
         override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
@@ -171,7 +139,6 @@ class GPSService: LifecycleService() {
     @Subscribe
     fun onNewReportReceived(newReportEvent: NewReportEvent) {
         LogManager.log("New Report Received")
-        NavigationManager.newReport(newReportEvent.report)
         if (NavigationManager.getReports() != null) {
             reports = NavigationManager.getReports()!!
         }
