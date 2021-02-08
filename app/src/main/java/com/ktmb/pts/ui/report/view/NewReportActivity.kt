@@ -32,8 +32,6 @@ class NewReportActivity : BaseActivity(), ReportTypeAdapter.OnReportTypeClickLis
     private var reportTypes: ArrayList<ReportType>? = null
 
     companion object {
-        private const val EXTRA_LATITUDE = "latitude"
-        private const val EXTRA_LONGITUDE = "longitude"
         private const val EXTRA_CURRENT_LOCATION = "currentLocation"
 
         fun newIntent(context: Context, currentLocation: LocationUpdate): Intent {
