@@ -105,7 +105,6 @@ class MainActivity : BaseActivity() {
                     this, R.raw.google_map_light
                 )
             )
-            this.googleMap!!.isMyLocationEnabled = true
 
             binding.vRoute.run {
                 googleMap?.setPadding(16.px, 24.px, 0, this.height + 24.px)
@@ -570,7 +569,7 @@ class MainActivity : BaseActivity() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onNewReportReceived(newReportEvent: NewReportEvent) {
-        LogManager.log("New Report Received")
+        //LogManager.log("New Report Received")
         if (NavigationManager.getReports() != null) {
             reports = NavigationManager.getReports()!!
             val track = ConfigManager.getTrack(newReportEvent.report.trackKey)
@@ -588,7 +587,7 @@ class MainActivity : BaseActivity() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onUpdateUIReceived(updateUIEvent: UpdateUIEvent) {
-        LogManager.log("Update UI Received: $updateUIEvent")
+        //LogManager.log("Update UI Received: $updateUIEvent")
 
         if (updateUIEvent.locationUpdate.trackDirection != null) {
             viewModel.routeNameVisibility.value = View.VISIBLE

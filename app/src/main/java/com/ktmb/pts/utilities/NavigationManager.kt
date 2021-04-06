@@ -331,7 +331,7 @@ object NavigationManager {
 
         setTrackLastLocation(newLocationUpdate?.newLocation)
 
-        LogManager.log(newLocationUpdate.toString())
+        //LogManager.log(newLocationUpdate.toString())
 
         return newLocationUpdate
     }
@@ -503,11 +503,21 @@ object NavigationManager {
             }
 
             val nearestReport = nearestReports?.minBy { report ->
-                calculatePointAToPointBWithinRoute(routeCoordinates, newLocationUpdate, currentLocationIndex, report)
+                calculatePointAToPointBWithinRoute(
+                    routeCoordinates,
+                    newLocationUpdate,
+                    currentLocationIndex,
+                    report
+                )
             }
 
             if (nearestReport != null) {
-                val totalDistance = calculatePointAToPointBWithinRoute(routeCoordinates, newLocationUpdate, currentLocationIndex, nearestReport)
+                val totalDistance = calculatePointAToPointBWithinRoute(
+                    routeCoordinates,
+                    newLocationUpdate,
+                    currentLocationIndex,
+                    nearestReport
+                )
 
                 when {
                     totalDistance > 0 && totalDistance <= 510 -> {
@@ -536,6 +546,14 @@ object NavigationManager {
 //                )
 
                 if (totalDistance > 0 && totalDistance <= 5000) {
+                    LogManager.log(
+                        message = " \n " +
+                                "New Location Update: $newLocationUpdate\n" +
+                                "Upcoming Report: $nearestReport\n" +
+                                "Upcoming Report Distance: $totalDistance",
+                        sendToCrashlytics = true
+                    )
+
                     EventBus.getDefault()
                         .post(UpdateUIEvent(newLocationUpdate, nearestReport, totalDistance))
                     return
@@ -543,12 +561,26 @@ object NavigationManager {
             }
         }
 
+        LogManager.log(
+            message = " \n " +
+                    "New Location Update: $newLocationUpdate\n" +
+                    "Upcoming Report: null\n" +
+                    "Upcoming Report Distance: null",
+            sendToCrashlytics = true
+        )
         EventBus.getDefault().post(UpdateUIEvent(newLocationUpdate, null, null))
     }
 
-    private fun triggerTextToSpeech(report: Report, originalDistance: Double, distance: Int, textToSpeech: TextToSpeech) {
+    private fun triggerTextToSpeech(
+        report: Report,
+        originalDistance: Double,
+        distance: Int,
+        textToSpeech: TextToSpeech
+    ) {
         if (!isSpeechAlreadyTrigger(report, distance)) {
-            val speech = "${report.reportType.name} reported in ${Utilities.DistanceHelper.speakMeter(originalDistance)}"
+            val speech = "${report.reportType.name} reported in ${
+                Utilities.DistanceHelper.speakMeter(originalDistance)
+            }"
 
             textToSpeech.speak(
                 speech,
@@ -608,7 +640,12 @@ object NavigationManager {
         return locationA.distanceTo(locationB).toDouble()
     }
 
-    private fun calculatePointAToPointBWithinRoute(routeCoordinates: ArrayList<LatLng>, newLocationUpdate: LocationUpdate, currentLocationIndex: Int, report: Report): Double {
+    private fun calculatePointAToPointBWithinRoute(
+        routeCoordinates: ArrayList<LatLng>,
+        newLocationUpdate: LocationUpdate,
+        currentLocationIndex: Int,
+        report: Report
+    ): Double {
         var totalDistance = 0.0
         val reportPosition = findNearestPoint(
             LatLng(report.latitude, report.longitude),
