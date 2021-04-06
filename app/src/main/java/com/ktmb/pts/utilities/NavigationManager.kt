@@ -241,7 +241,9 @@ object NavigationManager {
                         speed,
                         LatLng(it.latitude, it.longitude),
                         distanceFromOriginalLocation,
-                        track.key
+                        track.key,
+                        track.from,
+                        track.to
                     )
                 } else {
                     if (PolyUtil.isLocationOnPath(
@@ -256,7 +258,9 @@ object NavigationManager {
                             speed,
                             LatLng(it.latitude, it.longitude),
                             distanceFromOriginalLocation,
-                            track.key
+                            track.key,
+                            track.from,
+                            track.to
                         )
                     }
                 }
@@ -264,7 +268,6 @@ object NavigationManager {
         }
 
         if (routeCoordinates != null && newLocationUpdate != null) {
-            // Get JB -> Tumpat or Tumpat -> JB
             val track = ConfigManager.getTrack(newLocationUpdate!!.trackKey)
             val lastTrackLocation = getTrackLastLocation()
             if (track != null && lastTrackLocation != null) {
@@ -542,8 +545,10 @@ object NavigationManager {
 
             }
 
-            EventBus.getDefault().post(UpdateUIEvent(newLocationUpdate, nearestReport, totalDistance))
-            return
+            if (totalDistance > 0 && totalDistance <= 5000) {
+                EventBus.getDefault().post(UpdateUIEvent(newLocationUpdate, nearestReport, totalDistance))
+                return
+            }
         }
 
         EventBus.getDefault().post(UpdateUIEvent(newLocationUpdate, null, null))

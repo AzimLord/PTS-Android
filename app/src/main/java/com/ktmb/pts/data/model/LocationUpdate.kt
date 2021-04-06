@@ -10,6 +10,8 @@ data class LocationUpdate(
     val newLocation: LatLng,
     val distanceFromOriginalLocation: Float,
     val trackKey: String,
+    val trackFrom: String,
+    val trackTo: String,
     var status: Status? = null,
     var trackDirection: Direction? = null
 ): Parcelable {

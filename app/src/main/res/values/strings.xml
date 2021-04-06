@@ -7,6 +7,8 @@
     <string name="label.send_a_report">Send a report</string>
     <string name="label.navigation.start">Start Navigation</string>
     <string name="label.navigation.stop">Stop Navigation</string>
+    <string name="label.report.visible">It\'s there</string>
+    <string name="label.report.invisible">It\'s not there</string>
 
     <!-- Dialog -->
 

@@ -17,6 +17,7 @@ class ReportTypeAdapter(private val activity: Activity, private val onClick: OnR
 
     fun addReportTypes(reportTypes: ArrayList<ReportType>) {
         this.reportTypes.addAll(reportTypes)
+        this.reportTypes.add(ReportType(0, "Path Report"))
         notifyDataSetChanged()
     }
 
@@ -48,7 +49,7 @@ class ReportTypeAdapter(private val activity: Activity, private val onClick: OnR
         fun bind(reportType: ReportType, position: Int) {
             binding.viewModel = ReportTypeViewModel(reportType)
 
-            Glide.with(activity).load(reportType.imageUrl).into(binding.ivReport)
+            Glide.with(activity).load(reportType.imageUrl).placeholder(R.drawable.ic_report_type_placeholder).into(binding.ivReport)
 
             onClick?.let {
                 binding.root.setOnClickListener { _ ->

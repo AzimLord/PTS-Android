@@ -131,7 +131,7 @@ class SplashActivity : BaseActivity() {
                         }
                     }
                     .addOnFailureListener {
-                        Log.e("Firebase Messaging", it.message)
+                        Log.e("Firebase Messaging", it.toString())
                         getReportTypes()
                     }
             }

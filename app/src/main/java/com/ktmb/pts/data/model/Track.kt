@@ -6,5 +6,9 @@ data class Track(
     @SerializedName("key")
     val key: String,
     @SerializedName("coordinates")
-    val coordinates: ArrayList<Coordinate>
+    val coordinates: ArrayList<Coordinate>,
+    @SerializedName("from")
+    val from: String,
+    @SerializedName("to")
+    val to: String
 )

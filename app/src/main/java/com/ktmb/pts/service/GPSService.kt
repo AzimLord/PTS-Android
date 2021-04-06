@@ -92,14 +92,6 @@ class GPSService : LifecycleService() {
         override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
 
         }
-
-        override fun onProviderEnabled(provider: String?) {
-
-        }
-
-        override fun onProviderDisabled(provider: String?) {
-
-        }
     }
 
     private fun createNotification(): Notification {

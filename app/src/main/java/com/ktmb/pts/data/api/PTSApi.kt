@@ -3,11 +3,10 @@ package com.ktmb.pts.data.api
 import com.ktmb.pts.data.model.*
 import com.ktmb.pts.data.request.NewReportRequest
 import com.ktmb.pts.data.request.NotificationTokenRequest
+import com.ktmb.pts.data.request.SetReportVisibilityRequest
 import retrofit2.Call
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface PTSApi {
 
@@ -25,6 +24,9 @@ interface PTSApi {
 
     @POST("markers")
     suspend fun createReport(@Body request: NewReportRequest): Response<Report>
+
+    @POST("markers/visibility")
+    suspend fun setMarkerVisibility(@Body request: SetReportVisibilityRequest): Response<Report>
 
     @POST("notification_token")
     fun saveNotificationTokenCall(@Body request: NotificationTokenRequest): Call<NotificationToken>

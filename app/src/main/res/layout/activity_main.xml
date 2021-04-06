@@ -239,6 +239,47 @@
 
                 </LinearLayout>
 
+                <include
+                    layout="@layout/view_horizontal_line"
+                    android:visibility="@{viewModel.reportConfirmationVisibility}" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:animateLayoutChanges="true"
+                    android:visibility="@{viewModel.reportConfirmationVisibility}">
+
+                    <TextView
+                        android:id="@+id/btn_report_invisible"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/red"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:padding="@dimen/view.space.small"
+                        android:gravity="center"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"
+                        android:text="@string/label.report.invisible"
+                        tools:text="It's not there"/>
+
+                    <TextView
+                        android:id="@+id/btn_report_visible"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/green"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:padding="@dimen/view.space.small"
+                        android:gravity="center"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"
+                        android:text="@string/label.report.visible"
+                        tools:text="It's there"/>
+
+                </LinearLayout>
+
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>

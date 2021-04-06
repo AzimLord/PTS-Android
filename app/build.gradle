@@ -9,14 +9,14 @@ apply plugin: 'com.google.firebase.firebase-perf'
 def final appId = 'com.ktmb.pts'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
     buildToolsVersion "29.0.3"
     flavorDimensions "default"
 
     defaultConfig {
         applicationId appId
-        minSdkVersion 29
-        targetSdkVersion 29
+        minSdkVersion 21
+        targetSdkVersion 30
         versionCode 1
         versionName "0.0.1"
         archivesBaseName = "ktmb-pts-v$versionName($versionCode)"

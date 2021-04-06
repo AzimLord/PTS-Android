@@ -289,12 +289,10 @@ class MainActivity : BaseActivity() {
             Constants.Config.LOCATION_UPDATE_MIN_DISTANCE,
             locationCallback
         )
-        locationManager.registerGnssStatusCallback(gnssStatusCallback)
     }
 
     private fun stopLocationUpdate() {
         locationManager.removeUpdates(locationCallback)
-        locationManager.unregisterGnssStatusCallback(gnssStatusCallback)
     }
 
     private val locationCallback = object : LocationListener {
@@ -383,26 +381,6 @@ class MainActivity : BaseActivity() {
 
         override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
 
-        }
-
-        override fun onProviderEnabled(provider: String?) {
-
-        }
-
-        override fun onProviderDisabled(provider: String?) {
-
-        }
-    }
-
-    private val gnssStatusCallback = object : GnssStatus.Callback() {
-        override fun onSatelliteStatusChanged(status: GnssStatus?) {
-            super.onSatelliteStatusChanged(status)
-            //LogManager.log("Satellite count: ${status?.satelliteCount}")
-        }
-
-        override fun onFirstFix(ttffMillis: Int) {
-            super.onFirstFix(ttffMillis)
-            LogManager.log("onFirstFix: $ttffMillis")
         }
     }
 
@@ -613,7 +591,11 @@ class MainActivity : BaseActivity() {
 
         if (updateUIEvent.locationUpdate.trackDirection != null) {
             viewModel.routeNameVisibility.value = View.VISIBLE
-            viewModel.routeName.value = "${updateUIEvent.locationUpdate.trackKey} : ${updateUIEvent.locationUpdate.trackDirection}"
+            if (updateUIEvent.locationUpdate.trackDirection == LocationUpdate.Direction.FORWARD) {
+                viewModel.routeName.value = "${updateUIEvent.locationUpdate.trackFrom} -> ${updateUIEvent.locationUpdate.trackTo}"
+            } else {
+                viewModel.routeName.value = "${updateUIEvent.locationUpdate.trackTo} -> ${updateUIEvent.locationUpdate.trackFrom}"
+            }
         } else {
             if (updateUIEvent.locationUpdate.status != null) {
                 viewModel.routeNameVisibility.value = View.VISIBLE
@@ -629,11 +611,63 @@ class MainActivity : BaseActivity() {
             viewModel.reportImage.value = updateUIEvent.upcomingReport.reportType.imageUrl
             viewModel.reportName.value = updateUIEvent.upcomingReport.reportType.name
             viewModel.reportDistance.value = Utilities.DistanceHelper.formatMeter(updateUIEvent.upcomingReportDistance)
+
+            if (updateUIEvent.upcomingReportDistance != null) {
+                if (updateUIEvent.upcomingReportDistance < 1000.toDouble()) {
+                    setReportVisibilityButtons(updateUIEvent.upcomingReport.id)
+                    viewModel.reportConfirmationVisibility.value = View.VISIBLE
+
+                } else {
+                    viewModel.reportConfirmationVisibility.value = View.GONE
+                    resetReportVisibilityButtons()
+                }
+            } else {
+                viewModel.reportConfirmationVisibility.value = View.GONE
+                resetReportVisibilityButtons()
+            }
         } else {
             viewModel.reportVisibility.value = View.GONE
+            viewModel.reportConfirmationVisibility.value = View.GONE
+            resetReportVisibilityButtons()
             viewModel.reportImage.value = ""
             viewModel.reportName.value = ""
             viewModel.reportDistance.value = ""
         }
+    }
+
+    private fun setReportVisibilityButtons(reportId: Int) {
+        binding.btnReportInvisible.setOnClickListener {
+            setReportVisibility(reportId, false)
+        }
+
+        binding.btnReportVisible.setOnClickListener {
+            setReportVisibility(reportId, true)
+        }
+    }
+
+    private fun resetReportVisibilityButtons() {
+        binding.btnReportInvisible.setOnClickListener(null)
+        binding.btnReportVisible.setOnClickListener(null)
+    }
+
+    private fun setReportVisibility(reportId: Int, isVisible: Boolean) {
+        viewModel.setReportVisibility(reportId, isVisible).observe(this, Observer {
+            it?.let { resource ->
+                when (resource.status) {
+                    Status.LOADING ->
+                        viewModel.showProgress()
+                    Status.ERROR -> {
+                        viewModel.hideProgress()
+                        DialogManager.showErrorDialog(
+                            this,
+                            getString(R.string.error_default_message)
+                        )
+                    }
+                    Status.SUCCESS -> {
+                        viewModel.hideProgress()
+                    }
+                }
+            }
+        })
     }
 }

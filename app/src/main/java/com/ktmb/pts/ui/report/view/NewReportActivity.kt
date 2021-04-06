@@ -81,7 +81,11 @@ class NewReportActivity : BaseActivity(), ReportTypeAdapter.OnReportTypeClickLis
     }
 
     override fun onReportTypeClick(position: Int, reportType: ReportType) {
-        createReport(reportType)
+        if (reportType.id == 0) {
+            startActivity(NewReportPathActivity.newIntent(this, currentLocation))
+        } else {
+            createReport(reportType)
+        }
     }
 
     private fun init() {
