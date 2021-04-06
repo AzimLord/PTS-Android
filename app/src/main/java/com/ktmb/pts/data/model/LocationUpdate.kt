@@ -13,7 +13,8 @@ data class LocationUpdate(
     val trackFrom: String,
     val trackTo: String,
     var status: Status? = null,
-    var trackDirection: Direction? = null
+    var trackDirection: Direction? = null,
+    var trackBearing: Float? = null
 ): Parcelable {
 
     enum class Status {

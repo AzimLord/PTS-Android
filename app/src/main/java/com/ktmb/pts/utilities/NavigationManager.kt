@@ -286,22 +286,26 @@ object NavigationManager {
                     if (lastLocationBearing == 0.0f) {
                         newLocationUpdate!!.status = LocationUpdate.Status.STOPPED
                     } else {
-                        LogManager.log(" \nLast Location Bearing: $lastLocationBearing\nTrack Bearing: $trackBearing")
+                        //LogManager.log(" \nLast Location Bearing: $lastLocationBearing\nTrack Bearing: $trackBearing")
                         newLocationUpdate!!.status = LocationUpdate.Status.MOVING
 
                         if (trackBearing >= 0) {
                             if (lastLocationBearing > trackBearing - 225 && lastLocationBearing < trackBearing - 135) {
+                                newLocationUpdate!!.trackBearing = trackBearing
                                 newLocationUpdate!!.trackDirection =
                                     LocationUpdate.Direction.REVERSE
                             } else {
+                                newLocationUpdate!!.trackBearing = trackBearing - 180
                                 newLocationUpdate!!.trackDirection =
                                     LocationUpdate.Direction.FORWARD
                             }
                         } else {
                             if (lastLocationBearing < trackBearing + 225 && lastLocationBearing > trackBearing + 135) {
+                                newLocationUpdate!!.trackBearing = trackBearing
                                 newLocationUpdate!!.trackDirection =
                                     LocationUpdate.Direction.REVERSE
                             } else {
+                                newLocationUpdate!!.trackBearing = trackBearing - 180
                                 newLocationUpdate!!.trackDirection =
                                     LocationUpdate.Direction.FORWARD
                             }
@@ -313,7 +317,7 @@ object NavigationManager {
             }
 
             val reports = getReports(newLocationUpdate!!.trackKey)
-            LogManager.log(" \nReport size: ${reports?.size}\nText to speech: $textToSpeech")
+            //LogManager.log(" \nReport size: ${reports?.size}\nText to speech: $textToSpeech")
 
             if (reports != null && textToSpeech != null) {
                 getNextReport(
@@ -435,8 +439,7 @@ object NavigationManager {
                 }
             }
 
-            var nearestReport: Report? = null
-            var nearestReportIndex = -1
+            var nearestReports: ArrayList<Report>?
             val currentLocationIndex = PolyUtil.locationIndexOnEdgeOrPath(
                 newLocationUpdate.newLocation,
                 routeCoordinates,
@@ -444,110 +447,99 @@ object NavigationManager {
                 false,
                 0.01
             )
-            var totalDistance = 0.0
 
-            nearestReport = try {
+            nearestReports = try {
                 if (newLocationUpdate.trackDirection == LocationUpdate.Direction.REVERSE) {
-                    reports.first {
+                    ArrayList(reports.filter {
                         if (it.mapReverseIndex != null) {
-                            it.mapReverseIndex!! >= currentLocationIndex
+                            if (currentLocationIndex == it.mapReverseIndex) {
+                                val bearing = getLocationBearing(
+                                    LatLng(it.latitude, it.longitude),
+                                    newLocationUpdate.newLocation
+                                )
+                                if (newLocationUpdate.trackBearing != null) {
+                                    if (newLocationUpdate.trackBearing!! - 50 <= bearing && bearing <= newLocationUpdate.trackBearing!! + 50) {
+                                        it.mapReverseIndex!! >= currentLocationIndex
+                                    } else {
+                                        false
+                                    }
+                                } else {
+                                    false
+                                }
+                            } else {
+                                it.mapReverseIndex!! >= currentLocationIndex
+                            }
                         } else {
                             false
                         }
-                    }
+                    })
                 } else {
-                    reports.first {
+                    ArrayList(reports.filter {
                         if (it.mapIndex != null) {
-                            it.mapIndex!! >= currentLocationIndex
+                            if (currentLocationIndex == it.mapIndex) {
+                                val bearing = getLocationBearing(
+                                    LatLng(it.latitude, it.longitude),
+                                    newLocationUpdate.newLocation
+                                )
+                                if (newLocationUpdate.trackBearing != null) {
+                                    if (newLocationUpdate.trackBearing!! - 50 <= bearing && bearing <= newLocationUpdate.trackBearing!! + 50) {
+                                        it.mapIndex!! >= currentLocationIndex
+                                    } else {
+                                        false
+                                    }
+                                } else {
+                                    false
+                                }
+                            } else {
+                                it.mapIndex!! >= currentLocationIndex
+                            }
                         } else {
                             false
                         }
-                    }
+                    })
                 }
             } catch (e: Exception) {
                 null
             }
 
+            val nearestReport = nearestReports?.minBy { report ->
+                calculatePointAToPointBWithinRoute(routeCoordinates, newLocationUpdate, currentLocationIndex, report)
+            }
+
             if (nearestReport != null) {
-                val reportPosition = findNearestPoint(
-                    LatLng(nearestReport.latitude, nearestReport.longitude),
-                    routeCoordinates
-                )
-                nearestReportIndex =
-                    if (newLocationUpdate.trackDirection == LocationUpdate.Direction.REVERSE) {
-                        nearestReport.mapReverseIndex!! + 1
-                    } else {
-                        nearestReport.mapIndex!! + 1
+                val totalDistance = calculatePointAToPointBWithinRoute(routeCoordinates, newLocationUpdate, currentLocationIndex, nearestReport)
+
+                when {
+                    totalDistance > 0 && totalDistance <= 510 -> {
+                        triggerTextToSpeech(nearestReport, totalDistance, 500, textToSpeech)
                     }
-
-                val numOfLoop = nearestReportIndex - currentLocationIndex
-
-                if (numOfLoop < 150 && nearestReportIndex != -1 && currentLocationIndex != -1) {
-                    for (i in currentLocationIndex until nearestReportIndex) {
-                        totalDistance += when (i) {
-                            nearestReportIndex -> {
-                                if (reportPosition != null) {
-                                    SphericalUtil.computeDistanceBetween(
-                                        routeCoordinates[i],
-                                        LatLng(reportPosition.latitude, reportPosition.longitude)
-                                    )
-                                } else {
-                                    SphericalUtil.computeDistanceBetween(
-                                        routeCoordinates[i],
-                                        LatLng(nearestReport.latitude, nearestReport.longitude)
-                                    )
-                                }
-                            }
-                            currentLocationIndex -> {
-                                SphericalUtil.computeDistanceBetween(
-                                    newLocationUpdate.newLocation,
-                                    routeCoordinates[i + 1]
-                                )
-                            }
-                            else -> {
-                                SphericalUtil.computeDistanceBetween(
-                                    routeCoordinates[i],
-                                    routeCoordinates[i + 1]
-                                )
-                            }
-                        }
+                    totalDistance > 570 && totalDistance <= 1100 -> {
+                        triggerTextToSpeech(nearestReport, totalDistance, 1000, textToSpeech)
                     }
-
-                    when {
-                        totalDistance > 0 && totalDistance <= 510 -> {
-                            triggerTextToSpeech(nearestReport, totalDistance, 500, textToSpeech)
-                        }
-                        totalDistance > 570 && totalDistance <= 1100 -> {
-                            triggerTextToSpeech(nearestReport, totalDistance, 1000, textToSpeech)
-                        }
-                        totalDistance > 1700 && totalDistance <= 2100 -> {
-                            triggerTextToSpeech(nearestReport, totalDistance, 2000, textToSpeech)
-                        }
-                        totalDistance > 2700 && totalDistance <= 3100 -> {
-                            triggerTextToSpeech(nearestReport, totalDistance, 3000, textToSpeech)
-                        }
-                        totalDistance > 3700 && totalDistance <= 4100 -> {
-                            triggerTextToSpeech(nearestReport, totalDistance, 4000, textToSpeech)
-                        }
-                        totalDistance > 4700 && totalDistance <= 5100 -> {
-                            triggerTextToSpeech(nearestReport, totalDistance, 5000, textToSpeech)
-                        }
+                    totalDistance > 1700 && totalDistance <= 2100 -> {
+                        triggerTextToSpeech(nearestReport, totalDistance, 2000, textToSpeech)
+                    }
+                    totalDistance > 2700 && totalDistance <= 3100 -> {
+                        triggerTextToSpeech(nearestReport, totalDistance, 3000, textToSpeech)
+                    }
+                    totalDistance > 3700 && totalDistance <= 4100 -> {
+                        triggerTextToSpeech(nearestReport, totalDistance, 4000, textToSpeech)
+                    }
+                    totalDistance > 4700 && totalDistance <= 5100 -> {
+                        triggerTextToSpeech(nearestReport, totalDistance, 5000, textToSpeech)
                     }
                 }
 
-                LogManager.log(
-                    " " +
-                            "\nReport index: $nearestReportIndex, " +
-                            "\nCurrent location index: $currentLocationIndex, " +
-                            "\nNum Of Loop: $numOfLoop, " +
-                            "\nDistance: $totalDistance"
-                )
+//                LogManager.log(
+//                    " " +
+//                            "\nDistance: $totalDistance"
+//                )
 
-            }
-
-            if (totalDistance > 0 && totalDistance <= 5000) {
-                EventBus.getDefault().post(UpdateUIEvent(newLocationUpdate, nearestReport, totalDistance))
-                return
+                if (totalDistance > 0 && totalDistance <= 5000) {
+                    EventBus.getDefault()
+                        .post(UpdateUIEvent(newLocationUpdate, nearestReport, totalDistance))
+                    return
+                }
             }
         }
 
@@ -606,4 +598,85 @@ object NavigationManager {
         return reports
     }
 
+    private fun calculateDistance(pointA: LatLng, pointB: LatLng): Double {
+        val locationA = Location("pointA")
+        locationA.latitude = pointA.latitude
+        locationA.longitude = pointA.longitude
+        val locationB = Location("pointB")
+        locationB.latitude = pointB.latitude
+        locationB.longitude = pointB.longitude
+        return locationA.distanceTo(locationB).toDouble()
+    }
+
+    private fun calculatePointAToPointBWithinRoute(routeCoordinates: ArrayList<LatLng>, newLocationUpdate: LocationUpdate, currentLocationIndex: Int, report: Report): Double {
+        var totalDistance = 0.0
+        val reportPosition = findNearestPoint(
+            LatLng(report.latitude, report.longitude),
+            routeCoordinates
+        )
+        val nearestReportIndex =
+            if (newLocationUpdate.trackDirection == LocationUpdate.Direction.REVERSE) {
+                report.mapReverseIndex!!
+            } else {
+                report.mapIndex!!
+            }
+
+        val numOfLoop = nearestReportIndex - currentLocationIndex
+
+        if (numOfLoop < 150 && nearestReportIndex != -1 && currentLocationIndex != -1) {
+            for (i in currentLocationIndex until nearestReportIndex + 1) {
+                totalDistance += when (i) {
+                    nearestReportIndex -> {
+                        if (currentLocationIndex != nearestReportIndex) {
+                            if (reportPosition != null) {
+                                calculateDistance(
+                                    routeCoordinates[i],
+                                    LatLng(
+                                        reportPosition.latitude,
+                                        reportPosition.longitude
+                                    )
+                                )
+                            } else {
+                                calculateDistance(
+                                    routeCoordinates[i],
+                                    LatLng(report.latitude, report.longitude)
+                                )
+                            }
+                        } else {
+                            if (reportPosition != null) {
+                                calculateDistance(
+                                    newLocationUpdate.newLocation,
+                                    LatLng(
+                                        reportPosition.latitude,
+                                        reportPosition.longitude
+                                    )
+                                )
+                            } else {
+                                calculateDistance(
+                                    newLocationUpdate.newLocation,
+                                    LatLng(report.latitude, report.longitude)
+                                )
+                            }
+                        }
+                    }
+                    currentLocationIndex -> {
+                        calculateDistance(
+                            newLocationUpdate.newLocation,
+                            routeCoordinates[i + 1]
+                        )
+                    }
+                    else -> {
+                        calculateDistance(
+                            routeCoordinates[i],
+                            routeCoordinates[i + 1]
+                        )
+                    }
+                }
+            }
+        }
+
+        //Log.e("Nearest Reports", " \nReport type: ${report.reportType.name}\nDistance: ${totalDistance}")
+
+        return totalDistance
+    }
 }

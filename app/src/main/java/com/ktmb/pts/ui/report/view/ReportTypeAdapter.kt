@@ -17,7 +17,7 @@ class ReportTypeAdapter(private val activity: Activity, private val onClick: OnR
 
     fun addReportTypes(reportTypes: ArrayList<ReportType>) {
         this.reportTypes.addAll(reportTypes)
-        this.reportTypes.add(ReportType(0, "Path Report"))
+        //this.reportTypes.add(ReportType(0, "Path Report"))
         notifyDataSetChanged()
     }
 
