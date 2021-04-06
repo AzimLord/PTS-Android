@@ -10,6 +10,9 @@ import retrofit2.http.*
 
 interface PTSApi {
 
+    @GET("app_updater")
+    suspend fun checkAppUpdate(): Response<AppUpdate>
+
     @GET("routes")
     suspend fun getRoutes(): Response<ArrayList<Route>>
 

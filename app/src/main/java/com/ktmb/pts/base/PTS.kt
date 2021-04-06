@@ -2,6 +2,7 @@ package com.ktmb.pts.base
 
 import android.app.Application
 import android.content.ContextWrapper
+import com.downloader.PRDownloader
 import com.pixplicity.easyprefs.library.Prefs
 
 class PTS: Application() {
@@ -21,6 +22,9 @@ class PTS: Application() {
             .setPrefsName(packageName)
             .setUseDefaultSharedPreference(true)
             .build()
+
+        // Initialize PRDownlaoder
+        PRDownloader.initialize(applicationContext)
     }
 
 }

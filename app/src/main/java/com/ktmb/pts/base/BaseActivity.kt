@@ -1,5 +1,6 @@
 package com.ktmb.pts.base
 
+import android.app.Dialog
 import android.content.Intent
 import android.view.MenuItem
 import android.view.View
@@ -12,6 +13,7 @@ import kotlinx.android.synthetic.main.view_toolbar.*
 abstract class BaseActivity : AppCompatActivity() {
 
     protected lateinit var revealAnimation: RevealAnimation
+    protected var dialog: Dialog? = null
 
     override fun onStart() {
         super.onStart()

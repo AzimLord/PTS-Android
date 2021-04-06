@@ -64,7 +64,6 @@ class MainActivity : BaseActivity() {
     private var navigationStarted = false
     private var mapCameraAnimationInProgress = false
 
-    private var dialog: Dialog? = null
     private var tracks: ArrayList<Track>? = null
     private var trackPolylines = ArrayList<Polyline>()
 
