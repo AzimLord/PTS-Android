@@ -3,6 +3,7 @@ package com.ktmb.pts.service
 import android.Manifest
 import android.app.*
 import android.content.Context
+import android.content.Intent
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -11,11 +12,10 @@ import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import androidx.annotation.RequiresPermission
 import androidx.lifecycle.LifecycleService
-import com.google.android.gms.maps.model.LatLng
 import com.ktmb.pts.R
 import com.ktmb.pts.data.model.Report
-import com.ktmb.pts.data.model.Route
 import com.ktmb.pts.event.NewReportEvent
+import com.ktmb.pts.ui.main.view.MainActivity
 import com.ktmb.pts.ui.start.view.SplashActivity
 import com.ktmb.pts.utilities.Constants
 import com.ktmb.pts.utilities.LogManager
@@ -25,11 +25,16 @@ import org.greenrobot.eventbus.Subscribe
 import java.util.*
 import kotlin.collections.ArrayList
 
+
 class GPSService : LifecycleService() {
 
     private lateinit var locationManager: LocationManager
     private lateinit var textToSpeech: TextToSpeech
     private var reports: ArrayList<Report> = ArrayList()
+
+    companion object {
+        const val ACTION_STOP_SERVICE = "action_stop_service"
+    }
 
     @RequiresPermission(
         allOf = [
@@ -109,8 +114,8 @@ class GPSService : LifecycleService() {
         }
 
         val pendingIntent: PendingIntent =
-            SplashActivity.newIntent(this).let { notificationIntent ->
-                PendingIntent.getActivity(this, 0, notificationIntent, 0)
+            MainActivity.newIntent(this).let { notificationIntent ->
+                PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
             }
 
         val builder: Notification.Builder =
@@ -120,12 +125,34 @@ class GPSService : LifecycleService() {
             )
             else Notification.Builder(this)
 
+        val stopSelf = Intent(this, GPSService::class.java)
+        stopSelf.action = ACTION_STOP_SERVICE
+        val stopServicePendingIntent = PendingIntent
+            .getService(this, 0, stopSelf, PendingIntent.FLAG_CANCEL_CURRENT)
+
         return builder
             .setContentTitle("PTS")
+            .setContentText("Running. Tap to open")
             .setContentIntent(pendingIntent)
             .setSmallIcon(R.mipmap.ic_launcher)
-            .setPriority(Notification.PRIORITY_LOW)
+            .setPriority(Notification.PRIORITY_HIGH)
+            .addAction(
+                R.drawable.ic_close,
+                getString(R.string.label_service_switch_off),
+                stopServicePendingIntent
+            )
             .build()
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent != null && ACTION_STOP_SERVICE == intent.action) {
+            NavigationManager.clearNavigation()
+            stopForeground(true)
+            stopSelf()
+            return START_NOT_STICKY;
+        }
+
+        return super.onStartCommand(intent, flags, startId)
     }
 
     @Subscribe

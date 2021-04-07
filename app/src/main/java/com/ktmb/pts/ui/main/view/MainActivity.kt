@@ -3,11 +3,9 @@ package com.ktmb.pts.ui.main.view
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.GnssStatus
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -111,11 +109,11 @@ class MainActivity : BaseActivity() {
 
             this.googleMap!!.setOnCameraMoveStartedListener(onMapCameraMoveStartedListener)
 
-            initV2()
+            init()
         }
     }
 
-    private fun initV2() {
+    private fun init() {
         displayTracks()
 
         navigationStarted = NavigationManager.isNavigationStarted()
@@ -130,6 +128,9 @@ class MainActivity : BaseActivity() {
 
             viewModel.navigationBtnVisibility.value = View.VISIBLE
 
+            if (EventBus.getDefault().isRegistered(this)) {
+                EventBus.getDefault().unregister(this)
+            }
             EventBus.getDefault().register(this)
             populateReports()
             NavigationManager.startNavigation()
@@ -150,8 +151,10 @@ class MainActivity : BaseActivity() {
                                 R.color.green
                             )
                         )
-                        viewModel.primaryButtonText.value = getString(R.string.label_navigation_start)
+                        viewModel.primaryButtonText.value =
+                            getString(R.string.label_navigation_start)
                         dialog?.dismiss()
+                        viewModel.routeNameVisibility.value = View.GONE
                         viewModel.navigationBtnVisibility.value = View.GONE
                         EventBus.getDefault().unregister(this)
                         clearReports()
@@ -202,9 +205,14 @@ class MainActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
+        navigationStarted = NavigationManager.isNavigationStarted()
+
         if ((navigationStarted)) {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             stopService(Intent(this, GPSService::class.java))
+            if (EventBus.getDefault().isRegistered(this)) {
+                EventBus.getDefault().unregister(this)
+            }
             EventBus.getDefault().register(this)
 
             if (googleMap != null && NavigationManager.getReports() != null) {
@@ -212,6 +220,20 @@ class MainActivity : BaseActivity() {
                 clearReports()
                 populateReportMarkers()
             }
+        } else {
+            currentLocationMarker?.setIcon(Utilities.BitmapHelper.resToBitmap(R.drawable.ic_user_location))
+            binding.btnStart.setBackgroundColor(
+                ContextCompat.getColor(
+                    this,
+                    R.color.green
+                )
+            )
+            viewModel.primaryButtonText.value = getString(R.string.label_navigation_start)
+            viewModel.routeNameVisibility.value = View.GONE
+            viewModel.navigationBtnVisibility.value = View.GONE
+            EventBus.getDefault().unregister(this)
+            clearReports()
+            NavigationManager.clearNavigation()
         }
         startLocationUpdate()
     }
@@ -371,7 +393,7 @@ class MainActivity : BaseActivity() {
                         )
                             .icon(Utilities.BitmapHelper.resToBitmap(R.drawable.ic_user_location))
                             .flat(true)
-                            //.rotation(location.bearing)
+                        //.rotation(location.bearing)
                     )
                     currentLocationMarker?.setAnchor(0.5f, 0.5f)
                 }
@@ -591,9 +613,11 @@ class MainActivity : BaseActivity() {
         if (updateUIEvent.locationUpdate.trackDirection != null) {
             viewModel.routeNameVisibility.value = View.VISIBLE
             if (updateUIEvent.locationUpdate.trackDirection == LocationUpdate.Direction.FORWARD) {
-                viewModel.routeName.value = "${updateUIEvent.locationUpdate.trackFrom} -> ${updateUIEvent.locationUpdate.trackTo}"
+                viewModel.routeName.value =
+                    "${updateUIEvent.locationUpdate.trackFrom} -> ${updateUIEvent.locationUpdate.trackTo}"
             } else {
-                viewModel.routeName.value = "${updateUIEvent.locationUpdate.trackTo} -> ${updateUIEvent.locationUpdate.trackFrom}"
+                viewModel.routeName.value =
+                    "${updateUIEvent.locationUpdate.trackTo} -> ${updateUIEvent.locationUpdate.trackFrom}"
             }
         } else {
             if (updateUIEvent.locationUpdate.status != null) {
@@ -609,7 +633,8 @@ class MainActivity : BaseActivity() {
             viewModel.reportVisibility.value = View.VISIBLE
             viewModel.reportImage.value = updateUIEvent.upcomingReport.reportType.imageUrl
             viewModel.reportName.value = updateUIEvent.upcomingReport.reportType.name
-            viewModel.reportDistance.value = Utilities.DistanceHelper.formatMeter(updateUIEvent.upcomingReportDistance)
+            viewModel.reportDistance.value =
+                Utilities.DistanceHelper.formatMeter(updateUIEvent.upcomingReportDistance)
 
             if (updateUIEvent.upcomingReportDistance != null) {
                 if (updateUIEvent.upcomingReportDistance < 1000.toDouble()) {

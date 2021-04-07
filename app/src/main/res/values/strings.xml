@@ -10,6 +10,7 @@
     <string name="label.report.visible">It\'s there</string>
     <string name="label.report.invisible">It\'s not there</string>
     <string name="label.app_update.update">Update</string>
+    <string name="label.service.switch_off">Switch off</string>
 
     <!-- Dialog -->
 
