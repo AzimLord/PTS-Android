@@ -39,11 +39,11 @@ android {
     productFlavors {
         staging {
             applicationId appId + ".stg"
-            resValue "string", "app_name", "PTS STG"
+            resValue "string", "app_name", "KTMB Captain STG"
         }
         production {
             applicationId appId
-            resValue "string", "app_name", "PTS"
+            resValue "string", "app_name", "KTMB Captain"
         }
     }
 
@@ -75,6 +75,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     implementation 'com.mindorks.android:prdownloader:0.6.0'
+    implementation 'com.microsoft.cognitiveservices.speech:client-sdk:1.16.0'
 
     // Maps
 

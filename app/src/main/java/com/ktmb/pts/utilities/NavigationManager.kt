@@ -205,6 +205,7 @@ object NavigationManager {
     }
 
     fun navigationLocationUpdate(
+        context: Context,
         originalLocation: Location,
         textToSpeech: TextToSpeech? = null
     ): LocationUpdate? {
@@ -321,6 +322,7 @@ object NavigationManager {
 
             if (reports != null && textToSpeech != null) {
                 getNextReport(
+                    context,
                     textToSpeech,
                     routeCoordinates!!,
                     reports,
@@ -426,6 +428,7 @@ object NavigationManager {
     }
 
     private fun getNextReport(
+        context: Context,
         textToSpeech: TextToSpeech,
         routeCoordinates: ArrayList<LatLng>,
         reports: ArrayList<Report>,
@@ -521,22 +524,22 @@ object NavigationManager {
 
                 when {
                     totalDistance > 0 && totalDistance <= 510 -> {
-                        triggerTextToSpeech(nearestReport, totalDistance, 500, textToSpeech)
+                        triggerTextToSpeech(context, nearestReport, totalDistance, 500, textToSpeech)
                     }
                     totalDistance > 570 && totalDistance <= 1100 -> {
-                        triggerTextToSpeech(nearestReport, totalDistance, 1000, textToSpeech)
+                        triggerTextToSpeech(context, nearestReport, totalDistance, 1000, textToSpeech)
                     }
                     totalDistance > 1700 && totalDistance <= 2100 -> {
-                        triggerTextToSpeech(nearestReport, totalDistance, 2000, textToSpeech)
+                        triggerTextToSpeech(context, nearestReport, totalDistance, 2000, textToSpeech)
                     }
                     totalDistance > 2700 && totalDistance <= 3100 -> {
-                        triggerTextToSpeech(nearestReport, totalDistance, 3000, textToSpeech)
+                        triggerTextToSpeech(context, nearestReport, totalDistance, 3000, textToSpeech)
                     }
                     totalDistance > 3700 && totalDistance <= 4100 -> {
-                        triggerTextToSpeech(nearestReport, totalDistance, 4000, textToSpeech)
+                        triggerTextToSpeech(context, nearestReport, totalDistance, 4000, textToSpeech)
                     }
                     totalDistance > 4700 && totalDistance <= 5100 -> {
-                        triggerTextToSpeech(nearestReport, totalDistance, 5000, textToSpeech)
+                        triggerTextToSpeech(context, nearestReport, totalDistance, 5000, textToSpeech)
                     }
                 }
 
@@ -572,21 +575,29 @@ object NavigationManager {
     }
 
     private fun triggerTextToSpeech(
+        context: Context,
         report: Report,
         originalDistance: Double,
         distance: Int,
         textToSpeech: TextToSpeech
     ) {
         if (!isSpeechAlreadyTrigger(report, distance)) {
-            val speech = "${report.reportType.name} reported in ${
+//            val speech = "${report.reportType.name} reported in ${
+//                Utilities.DistanceHelper.speakMeter(originalDistance)
+//            }"
+
+            val speech = "${report.reportType.name} dilaporkan di ${
                 Utilities.DistanceHelper.speakMeter(originalDistance)
             }"
 
-            textToSpeech.speak(
-                speech,
-                TextToSpeech.QUEUE_FLUSH,
-                null
-            )
+//            textToSpeech.speak(
+//                speech,
+//                TextToSpeech.QUEUE_FLUSH,
+//                null
+//            )
+
+            if (AzureTTS.isPlaying()) AzureTTS.stopSpeech()
+            AzureTTS.speech(context, speech)
         }
     }
 
@@ -606,28 +617,6 @@ object NavigationManager {
                     Manifest.permission.ACCESS_BACKGROUND_LOCATION
                 )
                 == PackageManager.PERMISSION_GRANTED)
-    }
-
-    fun getMockReports(): ArrayList<Report> {
-        val reports = ArrayList<Report>()
-//        reports.add(Report(3, 1.8591425691047436, 103.4144429810641, ReportType(3, "Flood")))
-//        reports.add(
-//            Report(
-//                2,
-//                1.5207286968462848,
-//                103.73925055206125,
-//                ReportType(1, "Landslide")
-//            )
-//        )
-//        reports.add(
-//            Report(
-//                1,
-//                1.4917206891982524,
-//                103.75720931494729,
-//                ReportType(2, "Animal Herd")
-//            )
-//        )
-        return reports
     }
 
     private fun calculateDistance(pointA: LatLng, pointB: LatLng): Double {

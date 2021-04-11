@@ -22,7 +22,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/view.space.small"
-                android:textSize="22sp"
+                android:textSize="20sp"
                 tools:text="Dialog title here" />
 
             <TextView
@@ -30,7 +30,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/view.space.xxlarge"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 tools:text="Dialog message here" />
 
             <LinearLayout

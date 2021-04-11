@@ -321,7 +321,7 @@ class MainActivity : BaseActivity() {
             //LogManager.log("New location received")
             viewModel.gpsStatusVisibility.value = View.GONE
 
-            val currentLocation = NavigationManager.navigationLocationUpdate(location, textToSpeech)
+            val currentLocation = NavigationManager.navigationLocationUpdate(this@MainActivity, location, textToSpeech)
 
             if (currentLocation != null && googleMap != null) {
                 this@MainActivity.currentLocation = currentLocation

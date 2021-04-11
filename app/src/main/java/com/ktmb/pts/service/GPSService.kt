@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import androidx.annotation.RequiresPermission
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleService
 import com.ktmb.pts.R
 import com.ktmb.pts.data.model.Report
@@ -91,7 +92,7 @@ class GPSService : LifecycleService() {
 
     private val locationCallback = object : LocationListener {
         override fun onLocationChanged(location: Location) {
-            NavigationManager.navigationLocationUpdate(location, textToSpeech)
+            NavigationManager.navigationLocationUpdate(this@GPSService, location, textToSpeech)
         }
 
         override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
@@ -131,10 +132,11 @@ class GPSService : LifecycleService() {
             .getService(this, 0, stopSelf, PendingIntent.FLAG_CANCEL_CURRENT)
 
         return builder
-            .setContentTitle("PTS")
+            .setContentTitle(getString(R.string.app_name))
             .setContentText("Running. Tap to open")
             .setContentIntent(pendingIntent)
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setColor(ContextCompat.getColor(this, R.color.colorAccent))
             .setPriority(Notification.PRIORITY_HIGH)
             .addAction(
                 R.drawable.ic_close,
