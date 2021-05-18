@@ -221,7 +221,15 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="@dimen/view.space.xsmall"
+                            android:singleLine="true"
+                            android:textSize="@dimen/text.small"
+                            android:textColor="@color/grey"
+                            android:text="@={viewModel.reportID}"
+                            tools:text="Report #12345"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
                             android:singleLine="true"
                             android:textSize="@dimen/text.xlarge"
                             android:text="@={viewModel.reportName}"

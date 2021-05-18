@@ -5,20 +5,16 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.speech.tts.TextToSpeech
-import android.util.Log
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import com.akexorcist.googledirection.util.DirectionConverter
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Polyline
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.google.maps.android.PolyUtil
 import com.google.maps.android.SphericalUtil
-import com.ktmb.pts.R
 import com.ktmb.pts.data.model.*
-import com.ktmb.pts.event.NewReportEvent
+import com.ktmb.pts.event.ReportEvent
 import com.ktmb.pts.event.UpdateUIEvent
+import com.ktmb.pts.notification.NotificationType
 import com.pixplicity.easyprefs.library.Prefs
 import org.greenrobot.eventbus.EventBus
 import java.lang.Exception
@@ -69,9 +65,36 @@ object NavigationManager {
             if (reportsJson != "") {
                 val type = object : TypeToken<List<Report>>() {}.type
                 val reports = ArrayList(Gson().fromJson<List<Report>>(reportsJson, type))
+
+                // Remove existing report
+                val existingReport = reports.find {
+                    processReport.id == it.id
+                }
+                if (existingReport != null) {
+                    reports.remove(existingReport)
+                }
+
                 reports.add(processReport)
                 setReports(reports)
-                EventBus.getDefault().post(NewReportEvent(processReport))
+                EventBus.getDefault().post(ReportEvent(processReport))
+            }
+        }
+    }
+    
+    fun deleteReport(report: Report) {
+        val reportsJson = Prefs.getString(Constants.Navigation.REPORTS, "")
+        if (reportsJson != "") {
+            val type = object : TypeToken<List<Report>>() {}.type
+            val reports = ArrayList(Gson().fromJson<List<Report>>(reportsJson, type))
+
+            // Remove existing report
+            val existingReport = reports.find {
+                report.id == it.id
+            }
+            if (existingReport != null) {
+                reports.remove(existingReport)
+                setReports(reports)
+                EventBus.getDefault().post(ReportEvent(existingReport, NotificationType.REPORT_DELETED))
             }
         }
     }
@@ -505,13 +528,23 @@ object NavigationManager {
                 null
             }
 
+            nearestReports?.removeIf { report ->
+                val totalDistance = calculatePointAToPointBWithinRoute(
+                    routeCoordinates,
+                    newLocationUpdate,
+                    currentLocationIndex,
+                    report
+                )
+                totalDistance == null
+            }
+
             val nearestReport = nearestReports?.minBy { report ->
                 calculatePointAToPointBWithinRoute(
                     routeCoordinates,
                     newLocationUpdate,
                     currentLocationIndex,
                     report
-                )
+                )!!
             }
 
             if (nearestReport != null) {
@@ -520,7 +553,7 @@ object NavigationManager {
                     newLocationUpdate,
                     currentLocationIndex,
                     nearestReport
-                )
+                )!!
 
                 when {
                     totalDistance > 0 && totalDistance <= 510 -> {
@@ -634,7 +667,7 @@ object NavigationManager {
         newLocationUpdate: LocationUpdate,
         currentLocationIndex: Int,
         report: Report
-    ): Double {
+    ): Double? {
         var totalDistance = 0.0
         val reportPosition = findNearestPoint(
             LatLng(report.latitude, report.longitude),
@@ -699,9 +732,9 @@ object NavigationManager {
                     }
                 }
             }
+        } else {
+            return null
         }
-
-        //Log.e("Nearest Reports", " \nReport type: ${report.reportType.name}\nDistance: ${totalDistance}")
 
         return totalDistance
     }

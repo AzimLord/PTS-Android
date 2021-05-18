@@ -31,8 +31,9 @@ import com.ktmb.pts.data.model.LocationUpdate
 import com.ktmb.pts.data.model.Report
 import com.ktmb.pts.data.model.Track
 import com.ktmb.pts.databinding.ActivityMainBinding
-import com.ktmb.pts.event.NewReportEvent
+import com.ktmb.pts.event.ReportEvent
 import com.ktmb.pts.event.UpdateUIEvent
+import com.ktmb.pts.notification.NotificationType
 import com.ktmb.pts.service.GPSService
 import com.ktmb.pts.ui.main.viewmodel.MainViewModel
 import com.ktmb.pts.ui.report.view.NewReportActivity
@@ -589,19 +590,28 @@ class MainActivity : BaseActivity() {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onNewReportReceived(newReportEvent: NewReportEvent) {
+    fun onNewReportReceived(reportEvent: ReportEvent) {
         //LogManager.log("New Report Received")
         if (NavigationManager.getReports() != null) {
             reports = NavigationManager.getReports()!!
-            val track = ConfigManager.getTrack(newReportEvent.report.trackKey)
-            if (track != null) {
-                val reportPosition = NavigationManager.findNearestPoint(
-                    LatLng(newReportEvent.report.latitude, newReportEvent.report.longitude),
-                    NavigationManager.parseCoordinate(track.coordinates)
-                )
-                addReportToMap(newReportEvent.report, reportPosition)
-            } else {
-                addReportToMap(newReportEvent.report)
+
+            when (reportEvent.type) {
+                NotificationType.REPORT -> {
+                    val track = ConfigManager.getTrack(reportEvent.report.trackKey)
+                    if (track != null) {
+                        val reportPosition = NavigationManager.findNearestPoint(
+                            LatLng(reportEvent.report.latitude, reportEvent.report.longitude),
+                            NavigationManager.parseCoordinate(track.coordinates)
+                        )
+                        addReportToMap(reportEvent.report, reportPosition)
+                    } else {
+                        addReportToMap(reportEvent.report)
+                    }
+                }
+                NotificationType.REPORT_DELETED -> {
+                    clearReports()
+                    populateReportMarkers()
+                }
             }
         }
     }
@@ -613,6 +623,7 @@ class MainActivity : BaseActivity() {
         if (updateUIEvent.locationUpdate.trackDirection != null) {
             viewModel.routeNameVisibility.value = View.VISIBLE
             if (updateUIEvent.locationUpdate.trackDirection == LocationUpdate.Direction.FORWARD) {
+
                 viewModel.routeName.value =
                     "${updateUIEvent.locationUpdate.trackFrom} -> ${updateUIEvent.locationUpdate.trackTo}"
             } else {
@@ -631,6 +642,7 @@ class MainActivity : BaseActivity() {
 
         if (updateUIEvent.upcomingReport != null) {
             viewModel.reportVisibility.value = View.VISIBLE
+            viewModel.reportID.value = "Report #${updateUIEvent.upcomingReport.id}"
             viewModel.reportImage.value = updateUIEvent.upcomingReport.reportType.imageUrl
             viewModel.reportName.value = updateUIEvent.upcomingReport.reportType.name
             viewModel.reportDistance.value =
@@ -653,6 +665,7 @@ class MainActivity : BaseActivity() {
             viewModel.reportVisibility.value = View.GONE
             viewModel.reportConfirmationVisibility.value = View.GONE
             resetReportVisibilityButtons()
+            viewModel.reportID.value = ""
             viewModel.reportImage.value = ""
             viewModel.reportName.value = ""
             viewModel.reportDistance.value = ""

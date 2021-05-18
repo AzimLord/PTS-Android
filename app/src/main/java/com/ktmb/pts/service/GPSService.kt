@@ -15,9 +15,8 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleService
 import com.ktmb.pts.R
 import com.ktmb.pts.data.model.Report
-import com.ktmb.pts.event.NewReportEvent
+import com.ktmb.pts.event.ReportEvent
 import com.ktmb.pts.ui.main.view.MainActivity
-import com.ktmb.pts.ui.start.view.SplashActivity
 import com.ktmb.pts.utilities.Constants
 import com.ktmb.pts.utilities.LogManager
 import com.ktmb.pts.utilities.NavigationManager
@@ -158,7 +157,7 @@ class GPSService : LifecycleService() {
     }
 
     @Subscribe
-    fun onNewReportReceived(newReportEvent: NewReportEvent) {
+    fun onNewReportReceived(reportEvent: ReportEvent) {
         LogManager.log("New Report Received")
         if (NavigationManager.getReports() != null) {
             reports = NavigationManager.getReports()!!

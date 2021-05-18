@@ -6,11 +6,9 @@ import com.google.gson.Gson
 import com.ktmb.pts.data.model.Report
 import com.ktmb.pts.data.repository.AccountRepo
 import com.ktmb.pts.data.request.NotificationTokenRequest
-import com.ktmb.pts.event.NewReportEvent
 import com.ktmb.pts.utilities.AccountManager
 import com.ktmb.pts.utilities.LogManager
 import com.ktmb.pts.utilities.NavigationManager
-import org.greenrobot.eventbus.EventBus
 
 class PTSFirebaseMessagingService: FirebaseMessagingService() {
 
@@ -28,6 +26,10 @@ class PTSFirebaseMessagingService: FirebaseMessagingService() {
             NotificationType.REPORT.name -> {
                 val report = Gson().fromJson<Report>(body, Report::class.java)
                 NavigationManager.newReport(report)
+            }
+            NotificationType.REPORT_DELETED.name -> {
+                val report = Gson().fromJson<Report>(body, Report::class.java)
+                NavigationManager.deleteReport(report)
             }
         }
     }

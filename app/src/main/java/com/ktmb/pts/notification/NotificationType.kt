@@ -1,5 +1,6 @@
 package com.ktmb.pts.notification
 
 enum class NotificationType {
-    REPORT
+    REPORT,
+    REPORT_DELETED
 }
