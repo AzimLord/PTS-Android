@@ -556,22 +556,22 @@ object NavigationManager {
                 )!!
 
                 when {
-                    totalDistance > 0 && totalDistance <= 510 -> {
+                    totalDistance > 0 && totalDistance <= 550 -> {
                         triggerTextToSpeech(context, nearestReport, totalDistance, 500, textToSpeech)
                     }
-                    totalDistance > 570 && totalDistance <= 1100 -> {
+                    totalDistance > 570 && totalDistance <= 1050 -> {
                         triggerTextToSpeech(context, nearestReport, totalDistance, 1000, textToSpeech)
                     }
-                    totalDistance > 1700 && totalDistance <= 2100 -> {
+                    totalDistance > 1700 && totalDistance <= 2050 -> {
                         triggerTextToSpeech(context, nearestReport, totalDistance, 2000, textToSpeech)
                     }
-                    totalDistance > 2700 && totalDistance <= 3100 -> {
+                    totalDistance > 2700 && totalDistance <= 3050 -> {
                         triggerTextToSpeech(context, nearestReport, totalDistance, 3000, textToSpeech)
                     }
-                    totalDistance > 3700 && totalDistance <= 4100 -> {
+                    totalDistance > 3700 && totalDistance <= 4050 -> {
                         triggerTextToSpeech(context, nearestReport, totalDistance, 4000, textToSpeech)
                     }
-                    totalDistance > 4700 && totalDistance <= 5100 -> {
+                    totalDistance > 4700 && totalDistance <= 5050 -> {
                         triggerTextToSpeech(context, nearestReport, totalDistance, 5000, textToSpeech)
                     }
                 }
@@ -620,7 +620,7 @@ object NavigationManager {
 //            }"
 
             val speech = "${report.reportType.name} dilaporkan di ${
-                Utilities.DistanceHelper.speakMeter(originalDistance)
+                Utilities.DistanceHelper.speakMeter(distance.toDouble())
             }"
 
 //            textToSpeech.speak(

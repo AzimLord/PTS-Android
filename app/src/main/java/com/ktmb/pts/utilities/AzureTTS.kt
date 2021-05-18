@@ -5,10 +5,13 @@ import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.net.Uri
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.microsoft.cognitiveservices.speech.ResultReason
 import com.microsoft.cognitiveservices.speech.SpeechConfig
 import com.microsoft.cognitiveservices.speech.SpeechSynthesizer
 import org.jetbrains.anko.doAsync
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 
 object AzureTTS {
@@ -43,15 +46,31 @@ object AzureTTS {
             } else {
                 val speechSynthesizer = createSpeechSynthesizer()
                 val result = speechSynthesizer.SpeakText(text)
-                LogManager.log("${result.resultId}: ${result.reason}", "AzureTTS")
-                saveAudioFile(context, result.audioData, text)
+
+                when (result.reason) {
+                    ResultReason.Canceled -> {
+                        FirebaseCrashlytics.getInstance().setCustomKey("AzureTTS", "${result.resultId}: ${result.reason}")
+                        LogManager.log("${result.resultId}: ${result.reason}", "AzureTTS")
+                        null
+                    }
+                    else -> {
+                        LogManager.log("${result.resultId}: ${result.reason}", "AzureTTS")
+                        saveAudioFile(context, result.audioData, text)
+                    }
+                }
             }
 
-            val uri: Uri = Uri.fromFile(file)
-            mediaPlayer.setAudioAttributes(audioAttributes)
-            mediaPlayer.setDataSource(context, uri)
-            mediaPlayer.prepare()
-            mediaPlayer.start()
+            if (file != null) {
+                try {
+                    val uri: Uri = Uri.fromFile(file)
+                    mediaPlayer.setAudioAttributes(audioAttributes)
+                    mediaPlayer.setDataSource(context, uri)
+                    mediaPlayer.prepare()
+                    mediaPlayer.start()
+                } catch (e: Exception) {
+                    LogManager.log(exception = e, tag = "AzureTTS", sendToCrashlytics = true)
+                }
+            }
         }
     }
 
