@@ -3,6 +3,7 @@ package com.ktmb.pts.notification
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.ktmb.pts.data.model.Report
 import com.ktmb.pts.data.repository.AccountRepo
 import com.ktmb.pts.data.request.NotificationTokenRequest
@@ -26,6 +27,11 @@ class PTSFirebaseMessagingService: FirebaseMessagingService() {
             NotificationType.REPORT.name -> {
                 val report = Gson().fromJson<Report>(body, Report::class.java)
                 NavigationManager.newReport(report)
+            }
+            NotificationType.REPORTS.name -> {
+                val type = object : TypeToken<List<Report>>() {}.type
+                val reports = ArrayList(Gson().fromJson<List<Report>>(body, type))
+                NavigationManager.newReports(reports)
             }
             NotificationType.REPORT_DELETED.name -> {
                 val report = Gson().fromJson<Report>(body, Report::class.java)

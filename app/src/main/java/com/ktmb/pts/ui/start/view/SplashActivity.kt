@@ -35,6 +35,7 @@ class SplashActivity : BaseActivity() {
     private lateinit var viewModel: SplashViewModel
 
     companion object {
+        private const val TAG = "SPLASH_ACTIVITY"
         private const val REQUEST_LOCATION_ACCESS = 1000
 
         fun newIntent(context: Context): Intent {
@@ -136,8 +137,10 @@ class SplashActivity : BaseActivity() {
                 FirebaseMessaging.getInstance().token
                     .addOnSuccessListener {
                         if (!AccountManager.isFirebaseTokenAlreadyStored(it)) {
+                            LogManager.log("Push notification token: $it", TAG)
                             saveToken(it)
                         } else {
+                            LogManager.log("Push notification token already stored: $it", TAG)
                             checkAppUpdate()
                         }
                     }
@@ -161,6 +164,7 @@ class SplashActivity : BaseActivity() {
                         checkAppUpdate()
                     }
                     Status.SUCCESS -> {
+                        LogManager.log("Push notification token successfully stored", TAG)
                         viewModel.hideProgress()
                         AccountManager.saveFirebaseToken(resource.data?.token)
                         checkAppUpdate()

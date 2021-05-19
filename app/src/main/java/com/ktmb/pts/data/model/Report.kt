@@ -16,6 +16,8 @@ data class Report(
     val reportType: ReportType,
     @SerializedName("track_key")
     val trackKey: String? = null,
+    @SerializedName("custom_tts")
+    val customTTS: String? = null,
     @SerializedName("mapIndex")
     var mapIndex: Int? = null,
     @SerializedName("mapReverseIndex")

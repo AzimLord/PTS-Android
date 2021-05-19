@@ -71,12 +71,41 @@ object NavigationManager {
                     processReport.id == it.id
                 }
                 if (existingReport != null) {
-                    reports.remove(existingReport)
+                    reports.removeIf {
+                        it.id == existingReport.id
+                    }
                 }
 
                 reports.add(processReport)
                 setReports(reports)
                 EventBus.getDefault().post(ReportEvent(processReport))
+            }
+        }
+    }
+
+    fun newReports(newReports: ArrayList<Report>) {
+        newReports.forEach { report ->
+            val processReport = processReport(report)
+            if (processReport != null) {
+                val reportsJson = Prefs.getString(Constants.Navigation.REPORTS, "")
+                if (reportsJson != "") {
+                    val type = object : TypeToken<List<Report>>() {}.type
+                    val reports = ArrayList(Gson().fromJson<List<Report>>(reportsJson, type))
+
+                    // Remove existing report
+                    val existingReport = reports.find {
+                        processReport.id == it.id
+                    }
+                    if (existingReport != null) {
+                        reports.removeIf {
+                            it.id == existingReport.id
+                        }
+                    }
+
+                    reports.add(processReport)
+                    setReports(reports)
+                    EventBus.getDefault().post(ReportEvent(processReport))
+                }
             }
         }
     }
@@ -92,7 +121,9 @@ object NavigationManager {
                 report.id == it.id
             }
             if (existingReport != null) {
-                reports.remove(existingReport)
+                reports.removeIf {
+                    it.id == existingReport.id
+                }
                 setReports(reports)
                 EventBus.getDefault().post(ReportEvent(existingReport, NotificationType.REPORT_DELETED))
             }
@@ -619,9 +650,15 @@ object NavigationManager {
 //                Utilities.DistanceHelper.speakMeter(originalDistance)
 //            }"
 
-            val speech = "${report.reportType.name} dilaporkan di ${
-                Utilities.DistanceHelper.speakMeter(distance.toDouble())
-            }"
+            val speech = if (!report.customTTS.isNullOrEmpty()) {
+                "${report.customTTS} dilaporkan di ${
+                    Utilities.DistanceHelper.speakMeter(distance.toDouble())
+                }"
+            } else {
+                "${report.reportType.name} dilaporkan di ${
+                    Utilities.DistanceHelper.speakMeter(distance.toDouble())
+                }"
+            }
 
 //            textToSpeech.speak(
 //                speech,
