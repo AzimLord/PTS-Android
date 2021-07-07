@@ -49,6 +49,17 @@ class SettingsActivity : BaseActivity() {
     }
 
     fun logout(view: View) {
+        dialog = DialogManager.showConfirmationDialog(this,
+            getString(R.string.dialog_title_logout),
+            getString(R.string.dialog_message_logout),
+            null,
+            View.OnClickListener {
+                dialog?.dismiss()
+                logout()
+            })
+    }
+
+    fun logout() {
         viewModel.logout().observe(this, Observer {
             it?.let { resource ->
                 when (resource.status) {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="window.space.horizontal">24dp</dimen>
-    <dimen name="window.space.vertical">36dp</dimen>
+    <dimen name="window.space.horizontal">36dp</dimen>
+    <dimen name="window.space.vertical">24dp</dimen>
 
     <dimen name="view.space.xsmall">6dp</dimen>
     <dimen name="view.space.small">12dp</dimen>

@@ -22,6 +22,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/view.space.small"
+                android:fontFamily="@font/opensans_bold"
                 android:textSize="20sp"
                 tools:text="Dialog title here" />
 
@@ -30,6 +31,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/view.space.xxlarge"
+                android:fontFamily="@font/opensans_semi_bold"
                 android:textSize="16sp"
                 tools:text="Dialog message here" />
 

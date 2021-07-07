@@ -2,6 +2,7 @@ package com.ktmb.pts.ui.credentials.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
+import com.ktmb.pts.BuildConfig
 import com.ktmb.pts.base.BaseViewModel
 import com.ktmb.pts.data.repository.AccountRepo
 import com.ktmb.pts.utilities.AccountManager
@@ -14,6 +15,7 @@ class SettingsViewModel: BaseViewModel() {
 
     val ktmbId = MutableLiveData(AccountManager.getUserInfo().ktmbId)
     val name = MutableLiveData(AccountManager.getUserInfo().name)
+    val version = MutableLiveData("${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})")
 
     fun logout() = liveData(Dispatchers.IO) {
         emit(Resource.loading())

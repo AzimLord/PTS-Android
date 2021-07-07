@@ -62,6 +62,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/view.space.small"
                         android:orientation="vertical">
 
                         <TextView
@@ -84,6 +85,31 @@
 
                     </LinearLayout>
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="2dp"
+                            android:fontFamily="@font/opensans_light"
+                            android:text="@string/label.version" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/view.space.small"
+                            android:fontFamily="@font/opensans_bold"
+                            android:text="@={viewModel.version}"
+                            android:textSize="@dimen/text.large"
+                            tools:text="v0.0.2 (2)" />
+
+                        <include layout="@layout/view_horizontal_line" />
+
+                    </LinearLayout>
+
                 </LinearLayout>
 
             </androidx.core.widget.NestedScrollView>
@@ -93,20 +119,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:gravity="center">
 
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/view.space.normal"
-                    android:layout_marginVertical="@dimen/view.space.small"
-                    android:visibility="gone"/>
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/view.space.normal"
-                    android:layout_marginBottom="@dimen/view.space.normal"
+                    android:layout_marginBottom="@dimen/view.space.small"
                     android:text="@string/label.log_out"
                     android:onClick="logout"/>
 

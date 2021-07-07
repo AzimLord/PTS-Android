@@ -17,6 +17,7 @@
     <string name="label.ktmb_id">KTMB ID</string>
     <string name="label.password">Password</string>
     <string name="label.name">Name</string>
+    <string name="label.version">Version</string>
     <string name="label.settings">Settings</string>
 
     <!-- Dialog -->
@@ -24,6 +25,8 @@
     <string name="dialog.message.navigation.stop">Are you sure want to stop navigation?</string>
     <string name="dialog.title.app_update">App update</string>
     <string name="dialog.message.app_update">New version is available. Please update application</string>
+    <string name="dialog.title.logout">Log out</string>
+    <string name="dialog.message.logout">Are you sure want to log out?</string>
 
     <!-- Errors -->
 
