@@ -5,10 +5,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
@@ -23,6 +25,7 @@ import com.ktmb.pts.R
 import com.ktmb.pts.base.BaseActivity
 import com.ktmb.pts.data.model.AppUpdate
 import com.ktmb.pts.databinding.ActivitySplashBinding
+import com.ktmb.pts.ui.credentials.view.LoginActivity
 import com.ktmb.pts.ui.main.view.MainActivity
 import com.ktmb.pts.ui.start.viewmodel.SplashViewModel
 import com.ktmb.pts.utilities.*
@@ -104,34 +107,48 @@ class SplashActivity : BaseActivity() {
 
     override fun onRetryButtonClick(view: View) {
         super.onRetryButtonClick(view)
-        if (!NavigationManager.isLocationPermissionGranted(this)) {
-            val intent = Intent()
-            intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-            val uri: Uri = Uri.fromParts("package", packageName, null)
-            intent.data = uri
-            startActivity(intent)
-        } else {
-            init()
+        when {
+            !NavigationManager.isLocationPermissionGranted(this) -> {
+                val intent = Intent()
+                intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                val uri: Uri = Uri.fromParts("package", packageName, null)
+                intent.data = uri
+                startActivity(intent)
+            }
+            !packageManager.canRequestPackageInstalls() -> {
+                startActivity(
+                    Intent(
+                        Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
+                        Uri.parse("package:${applicationContext.packageName}")
+                    )
+                )
+            }
+            else -> {
+                init()
+            }
         }
     }
 
     private fun init() {
         when {
             !NavigationManager.isLocationPermissionGranted(this) -> {
-                requestPermissions(
-                    arrayOf(
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                    ),
-                    REQUEST_LOCATION_ACCESS
-                )
                 viewModel.showError(
                     errorTitle = getString(R.string.error_permission_title),
                     errorMessage = getString(R.string.error_permission_location_message),
                     showTryAgain = true,
                     tryAgainMessage = getString(R.string.label_go_to_settings)
                 )
+            }
+            !packageManager.canRequestPackageInstalls() -> {
+                viewModel.showError(
+                    errorTitle = getString(R.string.error_package_install_title),
+                    errorMessage = getString(R.string.error_package_install_message),
+                    showTryAgain = true,
+                    tryAgainMessage = getString(R.string.label_go_to_settings)
+                )
+            }
+            !AccountManager.isLoggedIn() -> {
+                startActivity(LoginActivity.newIntent(this))
             }
             else -> {
                 FirebaseMessaging.getInstance().token

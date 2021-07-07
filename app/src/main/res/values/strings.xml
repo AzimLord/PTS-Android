@@ -1,4 +1,5 @@
 <resources>
+    <string name="label.ktmb_captain">KTMB Captain</string>
     <string name="label.okay">Okay</string>
     <string name="label.yes">Yes</string>
     <string name="label.no">No</string>
@@ -11,6 +12,12 @@
     <string name="label.report.invisible">It\'s not there</string>
     <string name="label.app_update.update">Update</string>
     <string name="label.service.switch_off">Switch off</string>
+    <string name="label.login">Login</string>
+    <string name="label.log_out">Log out</string>
+    <string name="label.ktmb_id">KTMB ID</string>
+    <string name="label.password">Password</string>
+    <string name="label.name">Name</string>
+    <string name="label.settings">Settings</string>
 
     <!-- Dialog -->
 
@@ -27,6 +34,8 @@
     <string name="error.session_expires.message">Please login again to continue</string>
     <string name="error.permission.title">Permission Access</string>
     <string name="error.permission.location.message">App needs location permission to work</string>
+    <string name="error.package_install.title">App Install Access</string>
+    <string name="error.package_install.message">App needs access to install app for updates</string>
     <string name="error.gps.not_available.title">No GPS reception</string>
     <string name="error.gps.not_available.message">No GPS reception. Make sure you\'re outdoor</string>
     <string name="error.app_update_error.message">Something went wrong downloading update. Please try again.</string>

@@ -21,6 +21,7 @@ class MainViewModel: BaseViewModel() {
     val reportConfirmationVisibility = MutableLiveData(View.GONE)
     val recenterVisibility = MutableLiveData(View.GONE)
     val navigationBtnVisibility = MutableLiveData(View.GONE)
+    val nonNavigationBtnVisibility = MutableLiveData(View.VISIBLE)
     val routeNameVisibility = MutableLiveData(View.GONE)
     val primaryButtonText = MutableLiveData(PTS.instance.getString(R.string.label_navigation_start))
     val speed = MutableLiveData("")

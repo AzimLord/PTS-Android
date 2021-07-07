@@ -6,6 +6,7 @@ import com.ihsanbal.logging.LoggingInterceptor
 import com.itkacher.okhttpprofiler.OkHttpProfilerInterceptor
 import com.ktmb.pts.BuildConfig
 import com.ktmb.pts.data.CrashlyticsInterceptor
+import com.ktmb.pts.utilities.AccountManager
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -30,7 +31,7 @@ object ApiProvider {
 
     private val logging = LoggingInterceptor.Builder()
         .setLevel(if (BuildConfig.DEBUG) Level.BASIC else Level.NONE)
-        //.addHeader("Authorization", if (token.isEmpty()) "" else token)
+        .addHeader("Authorization", AccountManager.getAuthToken())
         .addHeader("Content-Type", "application/json")
         .build()
 

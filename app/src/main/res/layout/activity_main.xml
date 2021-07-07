@@ -52,6 +52,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerHorizontal="true"
+                            android:fontFamily="@font/opensans_bold"
                             android:text="@={viewModel.speed}"
                             android:textSize="32sp"
                             tools:text="25" />
@@ -117,35 +118,61 @@
 
             </RelativeLayout>
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/v_route"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/view.space.xlarge"
-                android:layout_marginVertical="@dimen/view.space.xxlarge"
-                app:cardCornerRadius="@dimen/card.radius.normal">
+                android:gravity="center_vertical">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                <androidx.cardview.widget.CardView
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_marginStart="@dimen/view.space.xlarge"
+                    android:onClick="settingsAction"
+                    app:cardCornerRadius="37dp"
+                    android:visibility="@{viewModel.nonNavigationBtnVisibility}"
+                    tools:visibility="visible">
 
-                    <TextView
-                        android:id="@+id/btn_start"
+                    <ImageView
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/green"
+                        android:layout_height="match_parent"
                         android:foreground="?attr/selectableItemBackground"
-                        android:gravity="center"
-                        android:paddingHorizontal="@dimen/card.radius.normal"
-                        android:paddingVertical="@dimen/card.radius.normal"
-                        android:text="@={viewModel.primaryButtonText}"
-                        android:textAllCaps="true"
-                        android:textColor="@color/white"
-                        android:textStyle="bold" />
+                        android:padding="10dp"
+                        app:srcCompat="@drawable/ic_settings" />
 
-                </LinearLayout>
+                </androidx.cardview.widget.CardView>
 
-            </androidx.cardview.widget.CardView>
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/v_route"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/view.space.xlarge"
+                    android:layout_marginVertical="@dimen/view.space.xxlarge"
+                    app:cardCornerRadius="@dimen/card.radius.normal">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/btn_start"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/green"
+                            android:foreground="?attr/selectableItemBackground"
+                            android:gravity="center"
+                            android:paddingHorizontal="@dimen/card.radius.normal"
+                            android:paddingVertical="@dimen/card.radius.normal"
+                            android:fontFamily="@font/opensans_bold"
+                            android:text="@={viewModel.primaryButtonText}"
+                            android:textAllCaps="true"
+                            android:textColor="@color/white"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -186,6 +213,7 @@
                     android:paddingHorizontal="@dimen/view.space.small"
                     android:paddingVertical="@dimen/view.space.xsmall"
                     android:textAllCaps="true"
+                    android:fontFamily="@font/opensans_light"
                     android:text="@={viewModel.routeName}"
                     android:visibility="@{viewModel.routeNameVisibility}"
                     tools:text="JB -> Tumpat" />
@@ -222,8 +250,9 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:singleLine="true"
+                            android:fontFamily="@font/opensans_light"
                             android:textSize="@dimen/text.small"
-                            android:textColor="@color/grey"
+                            android:textColor="@color/grey1"
                             android:text="@={viewModel.reportID}"
                             tools:text="Report #12345"/>
 
@@ -231,6 +260,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:singleLine="true"
+                            android:fontFamily="@font/opensans_semi_bold"
                             android:textSize="@dimen/text.xlarge"
                             android:text="@={viewModel.reportName}"
                             tools:text="Report Name"/>
@@ -239,6 +269,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:singleLine="true"
+                            android:fontFamily="@font/opensans_semi_bold"
                             android:textSize="@dimen/text.xlarge"
                             android:text="@={viewModel.reportDistance}"
                             tools:text="1 KM" />
@@ -267,6 +298,7 @@
                         android:foreground="?attr/selectableItemBackground"
                         android:padding="@dimen/view.space.small"
                         android:gravity="center"
+                        android:fontFamily="@font/opensans_bold"
                         android:textAllCaps="true"
                         android:textColor="@color/white"
                         android:text="@string/label.report.invisible"
@@ -281,6 +313,7 @@
                         android:foreground="?attr/selectableItemBackground"
                         android:padding="@dimen/view.space.small"
                         android:gravity="center"
+                        android:fontFamily="@font/opensans_bold"
                         android:textAllCaps="true"
                         android:textColor="@color/white"
                         android:text="@string/label.report.visible"

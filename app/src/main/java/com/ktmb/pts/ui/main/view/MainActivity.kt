@@ -35,6 +35,7 @@ import com.ktmb.pts.event.ReportEvent
 import com.ktmb.pts.event.UpdateUIEvent
 import com.ktmb.pts.notification.NotificationType
 import com.ktmb.pts.service.GPSService
+import com.ktmb.pts.ui.credentials.view.SettingsActivity
 import com.ktmb.pts.ui.main.viewmodel.MainViewModel
 import com.ktmb.pts.ui.report.view.NewReportActivity
 import com.ktmb.pts.utilities.*
@@ -128,6 +129,7 @@ class MainActivity : BaseActivity() {
             viewModel.primaryButtonText.value = getString(R.string.label_navigation_stop)
 
             viewModel.navigationBtnVisibility.value = View.VISIBLE
+            viewModel.nonNavigationBtnVisibility.value = View.GONE
 
             if (EventBus.getDefault().isRegistered(this)) {
                 EventBus.getDefault().unregister(this)
@@ -157,6 +159,7 @@ class MainActivity : BaseActivity() {
                         dialog?.dismiss()
                         viewModel.routeNameVisibility.value = View.GONE
                         viewModel.navigationBtnVisibility.value = View.GONE
+                        viewModel.nonNavigationBtnVisibility.value = View.VISIBLE
                         EventBus.getDefault().unregister(this)
                         clearReports()
                         NavigationManager.clearNavigation()
@@ -171,6 +174,7 @@ class MainActivity : BaseActivity() {
                 viewModel.primaryButtonText.value = getString(R.string.label_navigation_stop)
 
                 viewModel.navigationBtnVisibility.value = View.VISIBLE
+                viewModel.nonNavigationBtnVisibility.value = View.GONE
 
                 EventBus.getDefault().register(this)
                 populateReports()
@@ -232,6 +236,7 @@ class MainActivity : BaseActivity() {
             viewModel.primaryButtonText.value = getString(R.string.label_navigation_start)
             viewModel.routeNameVisibility.value = View.GONE
             viewModel.navigationBtnVisibility.value = View.GONE
+            viewModel.nonNavigationBtnVisibility.value = View.VISIBLE
             EventBus.getDefault().unregister(this)
             clearReports()
             NavigationManager.clearNavigation()
@@ -587,6 +592,10 @@ class MainActivity : BaseActivity() {
                 getString(R.string.error_gps_not_available_message)
             )
         }
+    }
+
+    fun settingsAction(view: View) {
+        startActivity(SettingsActivity.newIntent(this))
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

@@ -8,7 +8,8 @@
 
     <color name="white">#FFF</color>
     <color name="red">#FF6F61</color>
-    <color name="grey">#999999</color>
+    <color name="grey1">#999999</color>
+    <color name="grey2">#DCDCDC</color>
     <color name="green">#00ab66</color>
 
     <color name="ktmb.blue">#00539f</color>

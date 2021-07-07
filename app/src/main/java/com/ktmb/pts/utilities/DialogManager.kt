@@ -10,6 +10,7 @@ import android.view.Window
 import androidx.databinding.DataBindingUtil
 import com.ktmb.pts.R
 import com.ktmb.pts.databinding.ViewDialogConfirmationBinding
+import com.ktmb.pts.databinding.ViewDialogLoadingBinding
 
 object DialogManager {
 
@@ -101,6 +102,23 @@ object DialogManager {
 
         return dialog
 
+    }
+
+    fun showLoading(context: Context): Dialog {
+        val dialog = Dialog(context)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.setCancelable(false)
+
+        val binding = DataBindingUtil.inflate<ViewDialogLoadingBinding>(
+            LayoutInflater.from(context),
+            R.layout.view_dialog_loading, null, false
+        )
+
+        dialog.setContentView(binding.root)
+        dialog.show()
+
+        return dialog
     }
 
 }

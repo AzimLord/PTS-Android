@@ -6,8 +6,9 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="android:windowLightStatusBar">true</item>
         <item name="android:textColorPrimary">@color/text.color.primary</item>
+        <item name="buttonStyle">@style/PrimaryButton</item>
+        <item name="fontFamily">@font/opensans_regular</item>
         <!--<item name="android:windowTranslucentStatus">true</item>-->
     </style>
 
@@ -19,6 +20,7 @@
     </style>
 
     <style name="PrimaryToolbar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:fontFamily">@font/opensans_semi_bold</item>
         <item name="android:textColorPrimary">@color/text.color.primary</item>
         <item name="background">@color/colorPrimary</item>
         <item name="android:background">@color/colorPrimary</item>
@@ -27,6 +29,16 @@
     <style name="PrimaryDialog" parent="Base.Theme.AppCompat.Dialog">
         <item name="android:windowMinWidthMajor">55%</item>
         <item name="android:windowMinWidthMinor">55%</item>
+    </style>
+
+    <style name="PrimaryButton" parent="Widget.AppCompat.Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingStart">@dimen/view.space.small</item>
+        <item name="android:paddingEnd">@dimen/view.space.small</item>
+        <item name="android:background">@drawable/bg_rounded_full_blue</item>
+        <item name="android:fontFamily">@font/opensans_bold</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
 </resources>

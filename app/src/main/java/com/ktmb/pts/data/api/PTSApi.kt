@@ -1,6 +1,7 @@
 package com.ktmb.pts.data.api
 
 import com.ktmb.pts.data.model.*
+import com.ktmb.pts.data.request.LoginRequest
 import com.ktmb.pts.data.request.NewReportRequest
 import com.ktmb.pts.data.request.NotificationTokenRequest
 import com.ktmb.pts.data.request.SetReportVisibilityRequest
@@ -12,6 +13,15 @@ interface PTSApi {
 
     @GET("app_updater")
     suspend fun checkAppUpdate(): Response<AppUpdate>
+
+    @POST("login")
+    suspend fun login(@Body request: LoginRequest): Response<User>
+
+    @POST("logout")
+    suspend fun logout(): Response<Any>
+
+    @POST("notification_token")
+    suspend fun saveNotificationToken(@Body request: NotificationTokenRequest): Response<NotificationToken>
 
     @GET("routes")
     suspend fun getRoutes(): Response<ArrayList<Route>>
@@ -33,8 +43,5 @@ interface PTSApi {
 
     @POST("notification_token")
     fun saveNotificationTokenCall(@Body request: NotificationTokenRequest): Call<NotificationToken>
-
-    @POST("notification_token")
-    suspend fun saveNotificationToken(@Body request: NotificationTokenRequest): Response<NotificationToken>
 
 }

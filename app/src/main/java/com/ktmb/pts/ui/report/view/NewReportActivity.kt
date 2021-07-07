@@ -65,7 +65,7 @@ class NewReportActivity : BaseActivity(), ReportTypeAdapter.OnReportTypeClickLis
 
     override fun setToolbar() {
         super.setToolbar()
-        supportActionBar?.title = "Send a report"
+        supportActionBar?.title = getString(R.string.label_send_a_report)
     }
 
     override fun onRetryButtonClick(view: View) {
@@ -111,16 +111,16 @@ class NewReportActivity : BaseActivity(), ReportTypeAdapter.OnReportTypeClickLis
             it?.let { resource ->
                 when (resource.status) {
                     Status.LOADING ->
-                        viewModel.showProgress()
+                        dialog = DialogManager.showLoading(this)
                     Status.ERROR -> {
-                        viewModel.hideProgress()
+                        dialog?.dismiss()
                         DialogManager.showErrorDialog(
                             this,
                             getString(R.string.error_default_message)
                         )
                     }
                     Status.SUCCESS -> {
-                        viewModel.hideProgress()
+                        dialog?.dismiss()
                         setResult(Activity.RESULT_OK)
                         revealAnimation.unRevealActivity()
                     }
